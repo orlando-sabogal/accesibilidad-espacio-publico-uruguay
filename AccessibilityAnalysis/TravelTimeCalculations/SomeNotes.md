@@ -29,4 +29,22 @@ En la carpeta **ToyData** hay algunas bases de datos para probar y hacer la impl
 
 La Carpeta **uruguay-latest-free.shp** fue descargada de [Geogabrik](http://download.geofabrik.de/south-america/uruguay.html) y tiene la red de transporte.
 
-El Archivo **RiveraNetwork_Toy.shp** es el que vamos a usar para prototipar. Fue construído cargando la red de *Geogabrik* (que son datos de **OSM**) y haciendo un corte manual en QGIS para el municipio de Rivera. 
+El Archivo **RiveraNetwork_Toy.shp** es el que vamos a usar para prototipar. Fue construído cargando la red de *Geogabrik* (que son datos de **OSM**) y haciendo un corte manual en QGIS para el municipio de Rivera. Este archivo es consistente con el siguiente error: Las calles no se cortan en las intersecciones; es decir, hay una sobreposición pero las líneas no están unidas. A continuación se muestran dos ejemplos donde se seleccionó una línea. Como se puede ver, esta línea en realidad deberían ser varias líneas.
+
+![Ejemplo Error](ToyData/ToyDataMistake1.PNG)
+
+![Ejemplo Error](ToyData/ToyDataMistake2.PNG)
+
+**¿Cómo solucionarlo?**
+
+[GRASS](https://grass.osgeo.org/grass76/manuals/index.html) trae la función [v.clean](https://grass.osgeo.org/grass76/manuals/v.clean.html) para arreglar este tipo de problemas.
+ Intenté las siguientes dos opciones sin éxito:
+
+ - Traté de lanzar GRASS desde R usando **link2GI** y **rgrass7** pero no fue posible hacer la conexión. El problema puede ser que estoy usando un computador con windows (lo cual siempre crea problemas adicionales) o que al estar usando la última versión de QGIS y de GRASS, hay problemas de compatibilidad con las librerías.
+- Traté de usar los algorítmos de geoprocesamiento de QGIS (3.10.0) entre los cuales está *v.clean* de GRASS, pero salió un error.
+
+Dado que el proyecto no se enfoca en construir herramientas computacionales para mejor funcionalidades GIS, opté por una opción que funciona (arregla la red). Sin embargo no es usando una consola y la reproducibilidad debe ser manual.
+
+En la instalación de QGIS se instala también **QGIS 3.10.0 with GRASS 7.6.1**. No tengo claro cuál esl a diferencia pero de momento, abriendo este programa puedo usar GRASS sin problema.
+
+**El Resultado:**
