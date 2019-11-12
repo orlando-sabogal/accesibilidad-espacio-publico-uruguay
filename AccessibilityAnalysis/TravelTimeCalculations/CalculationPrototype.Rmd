@@ -1,0 +1,88 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(sf)
+library(tmap)
+
+library(igraph)
+```
+
+
+```{r}
+road <- st_read("ToyData/RiveraNetwork_Toy.shp")
+
+road %<>% mutate(Id = seq(1, dim(road)[1], 1), 
+                 Length = st_length(road)) %>% 
+         mutate(Length = as.numeric(Length)) %>% 
+         select(Id, Length)
+```
+
+```{r}
+plot(st_geometry(road))
+```
+
+
+```{r}
+GraphResult <- data.frame(Source = c(NULL), 
+                          Target = c(NULL), 
+                          weight  = c(NULL))
+Nodes <- data.frame(c())
+
+
+##See how to change to apply logic or to map logic.
+for (i in 1:dim(road)[1]){
+  
+  TempGraphResult <- data.frame(Source = c(0), 
+                                Target = c(0), 
+                                weight  = c(0))
+  
+  TempLink <- road %>% slice(i)
+  TempNodes <- st_coordinates(TempLink) %>% as.data.frame()
+  
+  TempNodes <- TempNodes %>%
+      mutate(Id = paste(as.character(X),
+                        as.character(Y),
+                        sep="-"))
+  
+  TempGraphResult$Source[1] <- TempNodes$Id[1]
+  TempGraphResult$Target[1] <- TempNodes$Id[dim(TempNodes)[1]] # KEY
+  TempGraphResult$weight [1] <- road$Length[i]
+  
+  GraphResult <- rbind(GraphResult, TempGraphResult)
+  
+  TempNodes <- TempNodes %>% slice(1,dim(TempNodes)[1])
+  
+  Nodes <- rbind(Nodes, TempNodes)
+}
+
+## 
+
+MyIgraph <- graph_from_data_frame(GraphResult) 
+
+
+```
+
+```{r}
+Test <- distances(MyIgraph)
+```
+
+```{r}
+distances(MyIgraph, "-55.5254843--30.896805", "-55.5254843--30.896805")
+```
+
+```{r}
+distances(MyIgraph, "-55.5254843--30.896805", "-55.5604783--30.8988728")
+```
+
+```{r}
+distances(MyIgraph, "-55.5388404--30.8946788", "-55.5335082--30.9087207")
+```
+
+```{r}
+distances(MyIgraph, "-55.5335082--30.9087207", "-55.5388404--30.8946788")
+```
