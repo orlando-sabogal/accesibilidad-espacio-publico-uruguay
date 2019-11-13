@@ -48,3 +48,8 @@ Dado que el proyecto no se enfoca en construir herramientas computacionales para
 En la instalación de QGIS se instala también **QGIS 3.10.0 with GRASS 7.6.1**. No tengo claro cuál esl a diferencia pero de momento, abriendo este programa puedo usar GRASS sin problema.
 
 **El Resultado:**
+
+
+El resultado se puede ver en la siguiente Figura:
+
+![Fig 3 Fixed](ToyData/ToyDataMistake3.PNG)
