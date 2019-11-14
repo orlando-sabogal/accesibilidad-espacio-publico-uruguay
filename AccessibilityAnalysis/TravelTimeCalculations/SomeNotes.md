@@ -11,7 +11,7 @@ Para hacer los análisis de accesibilidad, tal como se han planteado en el model
 Este último punto es tal vez el más difícil.
 Si se tiene una red de transporte (capa geográfica de líneas, seguramente en formato ESRI Shape) donde hay variables de velocidad, tiempo de viaje o distancia para cada línea (impedancia de la red), se debe considerar cada intersección como un nodo o punto desde y hacia donde se pueden hacer viajes. El objetivo es implementar un mecanismo computacional que permita calcular el tiempo de viaje (o longitud) desde un punto a cualquier otro punto. La implementación debe permitir ingresar viajes desde varios orígenes a varios destinos.
 
-## Algorítmo
+## Algorítmo (Concepto)
 
 En R (as far as I know) no hay una forma para tomar un archivo shape de líneas (un *Multilines* en *sf*) y hacer ruteo. La librería [Dodger](https://atfutures.github.io/dodgr/) es una opción interesante pero mi impresión prelminar es que es muy orientado a datos de OSM.
 
@@ -53,3 +53,14 @@ En la instalación de QGIS se instala también **QGIS 3.10.0 with GRASS 7.6.1**.
 El resultado se puede ver en la siguiente Figura:
 
 ![Fig 3 Fixed](ToyData/ToyDataMistake3.PNG)
+
+Con la función *v.clean* de *GRASS* se obtiene una red donde las líneas se han cortado cada vez que se cruzan con otras. Esto requiere una **verificación manual** ya que puede suceder que en el shape algunas líneas se intersecten pero que en la realidad no exista una conexión, por ejemplo, si es un paso a desnivel, un puente o un túnel. Adicional a esto, al red tiene algunas inconsistencias menores que se deben revisar y corregir manualmente como se ilustra en la siguiente Figura:
+
+![Fig 4](ToyData/ToyDataMistake4.PNG)
+
+## Implementación
+
+La implementación preliminar está en el archivo **"CalculationPrototype.Rmd"** (dentro de la misma carpeta que este archivo) y genera dos resultados que están en la carpeta **ToyData**:
+
+- **"Distances_Toy.csv"**: Este objeto tiene el valor de las distancias (que en realidad deberían ser tiempos de viaje) para cada par origen destino. 
+- **"Nodes_Toy.csv"**: Son los nodos con las coordendas y la variable de identificación. Es importante tener muy presente que *el CRS de este objeto (cuando se convierta a un shape) debe ser establecido (NO PROYECTADO) al mismo CRS del archivo de líneas de OSM originalmente utilizado-*

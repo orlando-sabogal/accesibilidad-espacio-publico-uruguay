@@ -11,6 +11,7 @@ library(tmap)
 library(igraph)
 ```
 
+#Matriz Cuadrada de distancias
 
 ```{r}
 road <- st_read("ToyData/RiveraNetwork_Toy_Cleaned.shp")
@@ -20,11 +21,6 @@ road %<>% mutate(Id = seq(1, dim(road)[1], 1),
          mutate(Length = as.numeric(Length)) %>% 
          select(Id, Length)
 ```
-
-```{r}
-plot(st_geometry(road))
-```
-
 
 ```{r}
 GraphResult <- data.frame(Source = c(NULL), 
@@ -95,52 +91,41 @@ NodesSummary <- Nodes %>%
 ```
 
 
+#Población y Oportunidades
+
 ```{r}
-distances(MyIgraph, "-55.5254843--30.896805", "-55.5254843--30.896805")
+EP <- st_read("../PublicSpaces/EP-RIVERA-polygon.shp")
 ```
 
 ```{r}
-distances(MyIgraph, "-55.5254843--30.896805", "-55.5604783--30.8988728")
+Polygon <- st_read("../DatosCenso/Rivera.shp")
 ```
 
 ```{r}
-distances(MyIgraph, "-55.5388404--30.8946788", "-55.5335082--30.9087207")
+Censo <- read_delim("../DatosCenso/MarcoCensal.csv", delim = ",")
 ```
 
 ```{r}
-distances(MyIgraph, "-55.5335082--30.9087207", "-55.5388404--30.8946788")
+Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
 ```
 
-
-
-```{r}
-DistancesLongFormat %>% 
-  filter(NodesOrigin == "-55.5483514--30.8848521") %>% 
-  filter(NodeDestination == "-55.5477998--30.8852398")
-```
-
-
-
-```{r}
-DistancesLongFormat %>% 
-  filter(NodesOrigin == "-55.5477998--30.8852398") %>% 
-  filter(NodeDestination == "-55.5483514--30.8848521")
-```
-
-
+##Centroides Espacio Público
 
 ```{r}
 
-
-DistancesLongFormat %>% 
-  filter(NodesOrigin == "-55.5483514--30.8848521") %>% 
-  filter(NodeDestination == "-55.5480204--30.8853884")
 ```
+
+##Centroides Población
 
 ```{r}
 
-
-DistancesLongFormat %>% 
-  filter(NodesOrigin == "-55.5480204--30.8853884") %>% 
-  filter(NodeDestination == "-55.5483514--30.8848521")
 ```
+
+#Filtrar Distancias
+
+```{r}
+
+```
+
+
+##Quemar Resultados

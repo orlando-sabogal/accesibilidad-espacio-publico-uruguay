@@ -1760,28 +1760,17 @@ library(igraph)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>#Matriz Cuadrada de distancias</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm9hZCA8LSBzdF9yZWFkKFwiVG95RGF0YS9SaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocFwiKVxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm9hZCA8LSBzdF9yZWFkKFwiVG95RGF0YS9SaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocFwiKVxuXG5yb2FkICU8PiUgbXV0YXRlKElkID0gc2VxKDEsIGRpbShyb2FkKVsxXSwgMSksIFxuICAgICAgICAgICAgICAgICBMZW5ndGggPSBzdF9sZW5ndGgocm9hZCkpICU+JSAjVG8gaGF2ZSBhIHByb3h5IHRvIGltcGVkYW5jZVxuICAgICAgICAgbXV0YXRlKExlbmd0aCA9IGFzLm51bWVyaWMoTGVuZ3RoKSkgJT4lIFxuICAgICAgICAgc2VsZWN0KElkLCBMZW5ndGgpXG5gYGAifQ== -->
 <pre class="r"><code>road &lt;- st_read(&quot;ToyData/RiveraNetwork_Toy_Cleaned.shp&quot;)
-</code></pre>
+
+road %&lt;&gt;% mutate(Id = seq(1, dim(road)[1], 1), 
+                 Length = st_length(road)) %&gt;% #To have a proxy to impedance
+         mutate(Length = as.numeric(Length)) %&gt;% 
+         select(Id, Length)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgUml2ZXJhTmV0d29ya19Ub3lfQ2xlYW5lZCcgZnJvbSBkYXRhIHNvdXJjZSBgQzpcXFVzZXJzXFxPcmxhblxcRHJvcGJveFxcQWNjZXNpYmlsaWRhZEVzcGFjaW9QdWJsaWNvVXJ1Z3VheVxcQWNjZXNzaWJpbGl0eUFuYWx5c2lzXFxUcmF2ZWxUaW1lQ2FsY3VsYXRpb25zXFxUb3lEYXRhXFxSaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA0NjA0IGZlYXR1cmVzIGFuZCAxMiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBMSU5FU1RSSU5HXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtNTUuNjE2MjUgeW1pbjogLTMwLjk0NDY1IHhtYXg6IC01NS41MDIxIHltYXg6IC0zMC44NTIxM1xuZXBzZyAoU1JJRCk6ICAgIDQzMjZcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtkYXR1bT1XR1M4NCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `RiveraNetwork_Toy_Cleaned&#39; from data source `C:\Users\Orlan\Dropbox\AccesibilidadEspacioPublicoUruguay\AccessibilityAnalysis\TravelTimeCalculations\ToyData\RiveraNetwork_Toy_Cleaned.shp&#39; using driver `ESRI Shapefile&#39;
-Simple feature collection with 4604 features and 12 fields
-geometry type:  LINESTRING
-dimension:      XY
-bbox:           xmin: -55.61625 ymin: -30.94465 xmax: -55.5021 ymax: -30.85213
-epsg (SRID):    4326
-proj4string:    +proj=longlat +datum=WGS84 +no_defs</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-plot-begin eyJjb25kaXRpb25zIjpbXSwiaGVpZ2h0IjozOTMuMDc3OSwic2l6ZV9iZWhhdmlvciI6MCwid2lkdGgiOjYzNn0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1828,132 +1817,116 @@ MyIgraph &lt;- graph_from_data_frame(GraphResult)
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShOYW1lc1Jvdz09TmFtZXNDb2x1bW5zKVxuXG5gYGAifQ== -->
-<pre class="r"><code>summary(NamesRow==NamesColumns)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgTW9kZSAgICBUUlVFIFxubG9naWNhbCAgICAyOTk3IFxuIn0= -->
-<pre><code>   Mode    TRUE 
-logical    2997 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0d2QoKVxuXG5gYGAifQ== -->
-<pre class="r"><code>getwd()
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiQzovVXNlcnMvT3JsYW4vRHJvcGJveC9BY2Nlc2liaWxpZGFkRXNwYWNpb1B1YmxpY29VcnVndWF5L0FjY2Vzc2liaWxpdHlBbmFseXNpcy9UcmF2ZWxUaW1lQ2FsY3VsYXRpb25zXCJcbiJ9 -->
-<pre><code>[1] &quot;C:/Users/Orlan/Dropbox/AccesibilidadEspacioPublicoUruguay/AccessibilityAnalysis/TravelTimeCalculations&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdGFuY2VzKE15SWdyYXBoLCBcIi01NS41MjU0ODQzLS0zMC44OTY4MDVcIiwgXCItNTUuNTI1NDg0My0tMzAuODk2ODA1XCIpXG5cbmBgYCJ9 -->
-<pre class="r"><code>distances(MyIgraph, &quot;-55.5254843--30.896805&quot;, &quot;-55.5254843--30.896805&quot;)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgICAgICAgICAtNTUuNTI1NDg0My0tMzAuODk2ODA1XG4tNTUuNTI1NDg0My0tMzAuODk2ODA1ICAgICAgICAgICAgICAgICAgICAgIDBcbiJ9 -->
-<pre><code>                       -55.5254843--30.896805
--55.5254843--30.896805                      0</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdGFuY2VzKE15SWdyYXBoLCBcIi01NS41MjU0ODQzLS0zMC44OTY4MDVcIiwgXCItNTUuNTYwNDc4My0tMzAuODk4ODcyOFwiKVxuXG5gYGAifQ== -->
-<pre class="r"><code>distances(MyIgraph, &quot;-55.5254843--30.896805&quot;, &quot;-55.5604783--30.8988728&quot;)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgICAgICAgICAtNTUuNTYwNDc4My0tMzAuODk4ODcyOFxuLTU1LjUyNTQ4NDMtLTMwLjg5NjgwNSAgICAgICAgICAgICAgICA0NTQ5LjE4M1xuIn0= -->
-<pre><code>                       -55.5604783--30.8988728
--55.5254843--30.896805                4549.183</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdGFuY2VzKE15SWdyYXBoLCBcIi01NS41Mzg4NDA0LS0zMC44OTQ2Nzg4XCIsIFwiLTU1LjUzMzUwODItLTMwLjkwODcyMDdcIilcblxuYGBgIn0= -->
-<pre class="r"><code>distances(MyIgraph, &quot;-55.5388404--30.8946788&quot;, &quot;-55.5335082--30.9087207&quot;)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgICAgICAgICAgLTU1LjUzMzUwODItLTMwLjkwODcyMDdcbi01NS41Mzg4NDA0LS0zMC44OTQ2Nzg4ICAgICAgICAgICAgICAgIDIwMjEuMzc4XG4ifQ== -->
-<pre><code>                        -55.5335082--30.9087207
--55.5388404--30.8946788                2021.378</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdGFuY2VzKE15SWdyYXBoLCBcIi01NS41MzM1MDgyLS0zMC45MDg3MjA3XCIsIFwiLTU1LjUzODg0MDQtLTMwLjg5NDY3ODhcIilcblxuYGBgIn0= -->
-<pre class="r"><code>distances(MyIgraph, &quot;-55.5335082--30.9087207&quot;, &quot;-55.5388404--30.8946788&quot;)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgICAgICAgICAgLTU1LjUzODg0MDQtLTMwLjg5NDY3ODhcbi01NS41MzM1MDgyLS0zMC45MDg3MjA3ICAgICAgICAgICAgICAgIDIwMjEuMzc4XG4ifQ== -->
-<pre><code>                        -55.5388404--30.8946788
--55.5335082--30.9087207                2021.378</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6MX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJtMVF5VTdETUJDZGJFVk4xVVhpd0ZmRUlvdHBJaTVJOU15bUhubzFpWUdJNEZTSkN4ejVnUDRDdjlveVRoeXBzckJrZStiTjg1dDVmbHB0WW4vakE0QUR6c2dDeDhNUVJyY1BZVVFqQU5mR3pBSVh4dXIrUnRaNVJ3VlluQlF1QWtvSlRkS1loa2tReEpja1RaT1VSdUgvdE9VeXkxSk5vMUdjcFZpYUtkck5vNzIvbmx6OUdtMjl2R0p0YTJqNUJaT012RFRzZ3h2MGNWTi9FWUc0ZWpMRmJmL2djY1JsNmc2a1JXZXBCeWQzZGNIYis2WjhMWVdHNWdwYThWYVdnc215SG1CLzNiQlBYcTFMTlFFY0RQR3plcXU0S0crckgvT004YTNHQU9ZN29jWXBndnh0Sjk2RFNEWG95djJhNnRnNmlaMitwWHZVVXA2V0duR0J3L1BCWmNXZWVhV1RHZjVONTVwc20xTEl3UW1pTFpHMVpBUFB6K3RxUURwdmNQZ0QrZnNsVXlrQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["NodesOrigin"],"name":[1],"type":["chr"],"align":["left"]},{"label":["NodeDestination"],"name":[2],"type":["chr"],"align":["left"]},{"label":["TravelTime"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"-55.5483514--30.8848521","2":"-55.5477998--30.8852398","3":"68.03981"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRGlzdGFuY2VzTG9uZ0Zvcm1hdCAlPiUgXG4gIGZpbHRlcihOb2Rlc09yaWdpbiA9PSBcIi01NS41NDc3OTk4LS0zMC44ODUyMzk4XCIpICU+JSBcbiAgZmlsdGVyKE5vZGVEZXN0aW5hdGlvbiA9PSBcIi01NS41NDgzNTE0LS0zMC44ODQ4NTIxXCIpXG5gYGAifQ== -->
-<pre class="r"><code>DistancesLongFormat %&gt;% 
-  filter(NodesOrigin == &quot;-55.5477998--30.8852398&quot;) %&gt;% 
-  filter(NodeDestination == &quot;-55.5483514--30.8848521&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6MX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJtMlF5VTdETUJDR0oxdFJVM1dST1BBVWljaGltb2dMRWoyenFZZGVUV0lnSWppVjR3SkhIcUN2d0t1MmpCTkhxaXdzMlJuLzgrV2ZHVCt0Tm9tLzhRSEFBV2RrZ2VOaENLUGJoeWdtTVlCcjQ4MENGOGJxKzQzVWVZY0NMRTRTRndFaElVbVh5enpQZ2lDNURMT014RW1lL1k5bENZbFNqYVVJUnBpYUtlem0wZDVmVDY1K2piSmVVZE8yTmJ6OGtrb2F2Z2o2d1F4OExKcXZrS091ZnBuaXRuL3dPT0l5ZlFkbzBZM1VpNU83cG1UdHZhaGVLNjZsdVpKV3JKVVZwN0pxQnRsZkMvcko2bldsT29DRFlYN1diQldMOXJaNk1jOW8zeEtHTU45eDFVNFpGRzg3L2g2a3FrQ1g3dGRVeDlaSjdQUWwzYU8yOHJUVmlIRnNuZzFUMXZTWjFmb3l3N2ZwcGc2M291SnltQVRWTnBTTnBBUG5GMDA5S04xc2NQZ0RTakVMUnlrQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["NodesOrigin"],"name":[1],"type":["chr"],"align":["left"]},{"label":["NodeDestination"],"name":[2],"type":["chr"],"align":["left"]},{"label":["TravelTime"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"-55.5477998--30.8852398","2":"-55.5483514--30.8848521","3":"68.03981"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cbkRpc3RhbmNlc0xvbmdGb3JtYXQgJT4lIFxuICBmaWx0ZXIoTm9kZXNPcmlnaW4gPT0gXCItNTUuNTQ4MzUxNC0tMzAuODg0ODUyMVwiKSAlPiUgXG4gIGZpbHRlcihOb2RlRGVzdGluYXRpb24gPT0gXCItNTUuNTQ4MDIwNC0tMzAuODg1Mzg4NFwiKVxuYGBgIn0= -->
-<pre class="r"><code>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRGlzdGFuY2VzTWF0cml4IDwtIGRpc3RhbmNlcyhNeUlncmFwaClcbkRpc3RhbmNlc01hdHJpeCA8LSBhcy5kYXRhLmZyYW1lKERpc3RhbmNlc01hdHJpeClcblxuTmFtZXNSb3cgPC0gcm93Lm5hbWVzKERpc3RhbmNlc01hdHJpeClcbk5hbWVzQ29sdW1ucyA8LSBuYW1lcyhEaXN0YW5jZXNNYXRyaXgpXG5zdW1tYXJ5KE5hbWVzUm93PT1OYW1lc0NvbHVtbnMpXG5cbkRpc3RhbmNlc01hdHJpeCROb2Rlc09yaWdpbiA8LSBOYW1lc1Jvd1xuXG5EaXN0YW5jZXNMb25nRm9ybWF0IDwtIHBpdm90X2xvbmdlcihEaXN0YW5jZXNNYXRyaXgsIGNvbHMgPSAtTm9kZXNPcmlnaW4sXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuYW1lc190byA9IFwiTm9kZURlc3RpbmF0aW9uXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZXNfdG8gPSBcIlRyYXZlbFRpbWVcIilcblxuIyMjI1xuXG5Ob2Rlc1N1bW1hcnkgPC0gTm9kZXMgJT4lIFxuICBncm91cF9ieShJZCkgJT4lIFxuICBzdW1tYXJpc2UoVG90YWxMaW5lcyA9IG4oKSwgTG9uZyA9IG1pbihYKSwgTGF0ID0gbWluKFkpKSBcbiAgXG5gYGAifQ== -->
+<pre class="r"><code>DistancesMatrix &lt;- distances(MyIgraph)
+DistancesMatrix &lt;- as.data.frame(DistancesMatrix)
 
-DistancesLongFormat %&gt;% 
-  filter(NodesOrigin == &quot;-55.5483514--30.8848521&quot;) %&gt;% 
-  filter(NodeDestination == &quot;-55.5480204--30.8853884&quot;)</code></pre>
+NamesRow &lt;- row.names(DistancesMatrix)
+NamesColumns &lt;- names(DistancesMatrix)
+summary(NamesRow==NamesColumns)
+
+DistancesMatrix$NodesOrigin &lt;- NamesRow
+
+DistancesLongFormat &lt;- pivot_longer(DistancesMatrix, cols = -NodesOrigin,
+                                    names_to = &quot;NodeDestination&quot;,
+                                    values_to = &quot;TravelTime&quot;)
+
+####
+
+NodesSummary &lt;- Nodes %&gt;% 
+  group_by(Id) %&gt;% 
+  summarise(TotalLines = n(), Long = min(X), Lat = min(Y)) 
+  </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MywibnJvdyI6MX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJuV1EyMHJFTUJDR3AwZlp5aDdBQzk5QmFPZ3AwRXZCdlZhUkJmYzJ0bEdETlYzYXJub2x2cE92SVBzK3ZzQ3VrN2FCSldBZzZlU2ZyLy9NNUc2NVRvTjFBQUFPT0w0RmpvY2grRmUzY1VJVEFOZkdtd1V1VE5UM0E2bXpIZ1ZZSENYT1Ewb0p6ZktVeGxrWXBoSEo4eXluU2Z3UEZpV1J4bWlLS0tabUNydTgvLzc4dWZqZEdXVzlvbUp0YTNnRkplc1llV3pZS3pmd1NWTy9FNG02K21XSzIvN0M0NERMOU5YUW9oOXBFRSt2NjVLM040MTRFbktVNWtwYThyWVRrbldpMW5Ld2F0Z2JyMVpDZFFCN3cveWszaWdXN1czMVlwN1J2dFVZd253clZUdGxXRHh2NVV0SVZZRStQYXpwR0Z0SHNUT1VkQStqbFRkYStWeGk4MXhQV2JFSFhvMlhHYjVOUHpYWk5FSjJlaEpVVzlMVkhkTmNVTlNWVnZyWllQOEh6aHgxUFNrQ0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["NodesOrigin"],"name":[1],"type":["chr"],"align":["left"]},{"label":["NodeDestination"],"name":[2],"type":["chr"],"align":["left"]},{"label":["TravelTime"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"-55.5483514--30.8848521","2":"-55.5480204--30.8853884","3":"94.80461"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[1]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cbkRpc3RhbmNlc0xvbmdGb3JtYXQgJT4lIFxuICBmaWx0ZXIoTm9kZXNPcmlnaW4gPT0gXCItNTUuNTQ4MDIwNC0tMzAuODg1Mzg4NFwiKSAlPiUgXG4gIGZpbHRlcihOb2RlRGVzdGluYXRpb24gPT0gXCItNTUuNTQ4MzUxNC0tMzAuODg0ODUyMVwiKVxuYGBgIn0= -->
-<pre class="r"><code>
-
-DistancesLongFormat %&gt;% 
-  filter(NodesOrigin == &quot;-55.5480204--30.8853884&quot;) %&gt;% 
-  filter(NodeDestination == &quot;-55.5483514--30.8848521&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3dyaXRlX2RlbGltKERpc3RhbmNlc0xvbmdGb3JtYXQsIFwiVG95RGF0YS9EaXN0YW5jZXNfVG95LmNzdlwiLCBkZWxpbSA9IFwiO1wiKVxuI3dyaXRlX2RlbGltKE5vZGVzU3VtbWFyeSwgXCJUb3lEYXRhL05vZGVzX1RveS5jc3ZcIiwgZGVsaW0gPSBcIjtcIilcbmBgYCJ9 -->
+<pre class="r"><code>#write_delim(DistancesLongFormat, &quot;ToyData/Distances_Toy.csv&quot;, delim = &quot;;&quot;)
+#write_delim(NodesSummary, &quot;ToyData/Nodes_Toy.csv&quot;, delim = &quot;;&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>#Población y Oportunidades</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRVAgPC0gc3RfcmVhZChcIi4uL1B1YmxpY1NwYWNlcy9FUC1SSVZFUkEtcG9seWdvbi5zaHBcIilcblxuYGBgIn0= -->
+<pre class="r"><code>EP &lt;- st_read(&quot;../PublicSpaces/EP-RIVERA-polygon.shp&quot;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgRVAtUklWRVJBLXBvbHlnb24nIGZyb20gZGF0YSBzb3VyY2UgYEM6XFxVc2Vyc1xcT3JsYW5cXERyb3Bib3hcXEFjY2VzaWJpbGlkYWRFc3BhY2lvUHVibGljb1VydWd1YXlcXEFjY2Vzc2liaWxpdHlBbmFseXNpc1xcUHVibGljU3BhY2VzXFxFUC1SSVZFUkEtcG9seWdvbi5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTMgZmVhdHVyZXMgYW5kIDQgZmllbGRzXG5nZW9tZXRyeSB0eXBlOiAgUE9MWUdPTlxuZGltZW5zaW9uOiAgICAgIFhZXG5iYm94OiAgICAgICAgICAgeG1pbjogNjM4MDMyLjIgeW1pbjogNjU3NjM2NiB4bWF4OiA2NDAxNDMuMiB5bWF4OiA2NTgxNDkyXG5lcHNnIChTUklEKTogICAgMzI3MjFcbnByb2o0c3RyaW5nOiAgICArcHJvaj11dG0gK3pvbmU9MjEgK3NvdXRoICtkYXR1bT1XR1M4NCArdW5pdHM9bSArbm9fZGVmc1xuIn0= -->
+<pre><code>Reading layer `EP-RIVERA-polygon&#39; from data source `C:\Users\Orlan\Dropbox\AccesibilidadEspacioPublicoUruguay\AccessibilityAnalysis\PublicSpaces\EP-RIVERA-polygon.shp&#39; using driver `ESRI Shapefile&#39;
+Simple feature collection with 13 features and 4 fields
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 638032.2 ymin: 6576366 xmax: 640143.2 ymax: 6581492
+epsg (SRID):    32721
+proj4string:    +proj=utm +zone=21 +south +datum=WGS84 +units=m +no_defs</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9seWdvbiA8LSBzdF9yZWFkKFwiLi4vRGF0b3NDZW5zby9SaXZlcmEuc2hwXCIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>Polygon &lt;- st_read(&quot;../DatosCenso/Rivera.shp&quot;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgUml2ZXJhJyBmcm9tIGRhdGEgc291cmNlIGBDOlxcVXNlcnNcXE9ybGFuXFxEcm9wYm94XFxBY2Nlc2liaWxpZGFkRXNwYWNpb1B1YmxpY29VcnVndWF5XFxBY2Nlc3NpYmlsaXR5QW5hbHlzaXNcXERhdG9zQ2Vuc29cXFJpdmVyYS5zaHAnIHVzaW5nIGRyaXZlciBgRVNSSSBTaGFwZWZpbGUnXG5TaW1wbGUgZmVhdHVyZSBjb2xsZWN0aW9uIHdpdGggMTQzMSBmZWF0dXJlcyBhbmQgMTcgZmllbGRzXG5nZW9tZXRyeSB0eXBlOiAgTVVMVElQT0xZR09OXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiA2MzM4MTAuMyB5bWluOiA2NTc1NjI1IHhtYXg6IDY0MjU3NS4xIHltYXg6IDY1ODQwMDNcbmVwc2cgKFNSSUQpOiAgICBOQVxucHJvajRzdHJpbmc6ICAgIE5BXG4ifQ== -->
+<pre><code>Reading layer `Rivera&#39; from data source `C:\Users\Orlan\Dropbox\AccesibilidadEspacioPublicoUruguay\AccessibilityAnalysis\DatosCenso\Rivera.shp&#39; using driver `ESRI Shapefile&#39;
+Simple feature collection with 1431 features and 17 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 633810.3 ymin: 6575625 xmax: 642575.1 ymax: 6584003
+epsg (SRID):    NA
+proj4string:    NA</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQ2Vuc28gPC0gcmVhZF9kZWxpbShcIi4uL0RhdG9zQ2Vuc28vTWFyY29DZW5zYWwuY3N2XCIsIGRlbGltID0gXCIsXCIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>Censo &lt;- read_delim(&quot;../DatosCenso/MarcoCensal.csv&quot;, delim = &quot;,&quot;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUGFyc2VkIHdpdGggY29sdW1uIHNwZWNpZmljYXRpb246XG5jb2xzKFxuICAuZGVmYXVsdCA9IGNvbF9kb3VibGUoKSxcbiAgbm9tZHB0byA9IFx1MDAxYlszMW1jb2xfY2hhcmFjdGVyKClcdTAwMWJbMzltLFxuICBub21sb2MgPSBcdTAwMWJbMzFtY29sX2NoYXJhY3RlcigpXHUwMDFiWzM5bSxcbiAgQkFSUklPODUgPSBcdTAwMWJbMzNtY29sX2xvZ2ljYWwoKVx1MDAxYlszOW1cbilcblNlZSBzcGVjKC4uLikgZm9yIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb25zLlxuIn0= -->
+<pre><code>Parsed with column specification:
+cols(
+  .default = col_double(),
+  nomdpto = [31mcol_character()[39m,
+  nomloc = [31mcol_character()[39m,
+  BARRIO85 = [33mcol_logical()[39m
+)
+See spec(...) for full column specifications.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9wdWxhdGlvbiA8LSBQb2x5Z29uICU+JSBsZWZ0X2pvaW4oQ2Vuc28sIGJ5ID0gYyhcIkNPRENPTVBcIiA9IFwiY29kY29tcFwiKSlcbmBgYCJ9 -->
+<pre class="r"><code>Population &lt;- Polygon %&gt;% left_join(Censo, by = c(&quot;CODCOMP&quot; = &quot;codcomp&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>##Centroides Espacio Público</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>##Centroides Población</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>#Filtrar Distancias</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>##Quemar Resultados</p>
+<!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShtYWdyaXR0cikNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHRtYXApDQpsaWJyYXJ5KGlncmFwaCkNCmBgYA0KDQoNCmBgYHtyfQ0Kcm9hZCA8LSBzdF9yZWFkKCJUb3lEYXRhL1JpdmVyYU5ldHdvcmtfVG95X0NsZWFuZWQuc2hwIikNCg0Kcm9hZCAlPD4lIG11dGF0ZShJZCA9IHNlcSgxLCBkaW0ocm9hZClbMV0sIDEpLCANCiAgICAgICAgICAgICAgICAgTGVuZ3RoID0gc3RfbGVuZ3RoKHJvYWQpKSAlPiUgI1RvIGhhdmUgYSBwcm94eSB0byBpbXBlZGFuY2UNCiAgICAgICAgIG11dGF0ZShMZW5ndGggPSBhcy5udW1lcmljKExlbmd0aCkpICU+JSANCiAgICAgICAgIHNlbGVjdChJZCwgTGVuZ3RoKQ0KYGBgDQoNCmBgYHtyfQ0KcGxvdChzdF9nZW9tZXRyeShyb2FkKSkNCmBgYA0KDQoNCmBgYHtyfQ0KR3JhcGhSZXN1bHQgPC0gZGF0YS5mcmFtZShTb3VyY2UgPSBjKE5VTEwpLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgVGFyZ2V0ID0gYyhOVUxMKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgIHdlaWdodCAgPSBjKE5VTEwpKQ0KTm9kZXMgPC0gZGF0YS5mcmFtZShjKCkpDQoNCg0KIyNTZWUgaG93IHRvIGNoYW5nZSB0byBhcHBseSBsb2dpYyBvciB0byBtYXAgbG9naWMuDQpmb3IgKGkgaW4gMTpkaW0ocm9hZClbMV0pew0KICANCiAgVGVtcEdyYXBoUmVzdWx0IDwtIGRhdGEuZnJhbWUoU291cmNlID0gYygwKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRhcmdldCA9IGMoMCksIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3ZWlnaHQgID0gYygwKSkNCiAgDQogIFRlbXBMaW5rIDwtIHJvYWQgJT4lIHNsaWNlKGkpDQogIFRlbXBOb2RlcyA8LSBzdF9jb29yZGluYXRlcyhUZW1wTGluaykgJT4lIGFzLmRhdGEuZnJhbWUoKQ0KICANCiAgVGVtcE5vZGVzIDwtIFRlbXBOb2RlcyAlPiUNCiAgICAgIG11dGF0ZShJZCA9IHBhc3RlKGFzLmNoYXJhY3RlcihYKSwNCiAgICAgICAgICAgICAgICAgICAgICAgIGFzLmNoYXJhY3RlcihZKSwNCiAgICAgICAgICAgICAgICAgICAgICAgIHNlcD0iLSIpKQ0KICANCiAgVGVtcEdyYXBoUmVzdWx0JFNvdXJjZVsxXSA8LSBUZW1wTm9kZXMkSWRbMV0NCiAgVGVtcEdyYXBoUmVzdWx0JFRhcmdldFsxXSA8LSBUZW1wTm9kZXMkSWRbZGltKFRlbXBOb2RlcylbMV1dICMgS0VZDQogIFRlbXBHcmFwaFJlc3VsdCR3ZWlnaHQgWzFdIDwtIHJvYWQkTGVuZ3RoW2ldDQogIA0KICBHcmFwaFJlc3VsdCA8LSByYmluZChHcmFwaFJlc3VsdCwgVGVtcEdyYXBoUmVzdWx0KQ0KICANCiAgVGVtcE5vZGVzIDwtIFRlbXBOb2RlcyAlPiUgc2xpY2UoMSxkaW0oVGVtcE5vZGVzKVsxXSkNCiAgDQogIE5vZGVzIDwtIHJiaW5kKE5vZGVzLCBUZW1wTm9kZXMpDQp9DQoNCiMjIA0KDQpNeUlncmFwaCA8LSBncmFwaF9mcm9tX2RhdGFfZnJhbWUoR3JhcGhSZXN1bHQpIA0KDQoNCmBgYA0KDQpgYGB7cn0NCkRpc3RhbmNlc01hdHJpeCA8LSBkaXN0YW5jZXMoTXlJZ3JhcGgpDQpEaXN0YW5jZXNNYXRyaXggPC0gYXMuZGF0YS5mcmFtZShEaXN0YW5jZXNNYXRyaXgpDQoNCk5hbWVzUm93IDwtIHJvdy5uYW1lcyhEaXN0YW5jZXNNYXRyaXgpDQpOYW1lc0NvbHVtbnMgPC0gbmFtZXMoRGlzdGFuY2VzTWF0cml4KQ0Kc3VtbWFyeShOYW1lc1Jvdz09TmFtZXNDb2x1bW5zKQ0KDQpEaXN0YW5jZXNNYXRyaXgkTm9kZXNPcmlnaW4gPC0gTmFtZXNSb3cNCg0KRGlzdGFuY2VzTG9uZ0Zvcm1hdCA8LSBwaXZvdF9sb25nZXIoRGlzdGFuY2VzTWF0cml4LCBjb2xzID0gLU5vZGVzT3JpZ2luLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbmFtZXNfdG8gPSAiTm9kZURlc3RpbmF0aW9uIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlc190byA9ICJUcmF2ZWxUaW1lIikNCg0KIyMjIw0KDQpOb2Rlc1N1bW1hcnkgPC0gTm9kZXMgJT4lIA0KICBncm91cF9ieShJZCkgJT4lIA0KICBzdW1tYXJpc2UoVG90YWxMaW5lcyA9IG4oKSwgTG9uZyA9IG1pbihYKSwgTGF0ID0gbWluKFkpKSANCiAgDQpgYGANCg0KDQpgYGB7cn0NCiN3cml0ZV9kZWxpbShEaXN0YW5jZXNMb25nRm9ybWF0LCAiVG95RGF0YS9EaXN0YW5jZXNfVG95LmNzdiIsIGRlbGltID0gIjsiKQ0KI3dyaXRlX2RlbGltKE5vZGVzU3VtbWFyeSwgIlRveURhdGEvTm9kZXNfVG95LmNzdiIsIGRlbGltID0gIjsiKQ0KYGBgDQoNCg0KYGBge3J9DQpkaXN0YW5jZXMoTXlJZ3JhcGgsICItNTUuNTI1NDg0My0tMzAuODk2ODA1IiwgIi01NS41MjU0ODQzLS0zMC44OTY4MDUiKQ0KYGBgDQoNCmBgYHtyfQ0KZGlzdGFuY2VzKE15SWdyYXBoLCAiLTU1LjUyNTQ4NDMtLTMwLjg5NjgwNSIsICItNTUuNTYwNDc4My0tMzAuODk4ODcyOCIpDQpgYGANCg0KYGBge3J9DQpkaXN0YW5jZXMoTXlJZ3JhcGgsICItNTUuNTM4ODQwNC0tMzAuODk0Njc4OCIsICItNTUuNTMzNTA4Mi0tMzAuOTA4NzIwNyIpDQpgYGANCg0KYGBge3J9DQpkaXN0YW5jZXMoTXlJZ3JhcGgsICItNTUuNTMzNTA4Mi0tMzAuOTA4NzIwNyIsICItNTUuNTM4ODQwNC0tMzAuODk0Njc4OCIpDQpgYGANCg0KDQoNCmBgYHtyfQ0KRGlzdGFuY2VzTG9uZ0Zvcm1hdCAlPiUgDQogIGZpbHRlcihOb2Rlc09yaWdpbiA9PSAiLTU1LjU0ODM1MTQtLTMwLjg4NDg1MjEiKSAlPiUgDQogIGZpbHRlcihOb2RlRGVzdGluYXRpb24gPT0gIi01NS41NDc3OTk4LS0zMC44ODUyMzk4IikNCmBgYA0KDQoNCg0KYGBge3J9DQpEaXN0YW5jZXNMb25nRm9ybWF0ICU+JSANCiAgZmlsdGVyKE5vZGVzT3JpZ2luID09ICItNTUuNTQ3Nzk5OC0tMzAuODg1MjM5OCIpICU+JSANCiAgZmlsdGVyKE5vZGVEZXN0aW5hdGlvbiA9PSAiLTU1LjU0ODM1MTQtLTMwLjg4NDg1MjEiKQ0KYGBgDQoNCg0KDQpgYGB7cn0NCg0KDQpEaXN0YW5jZXNMb25nRm9ybWF0ICU+JSANCiAgZmlsdGVyKE5vZGVzT3JpZ2luID09ICItNTUuNTQ4MzUxNC0tMzAuODg0ODUyMSIpICU+JSANCiAgZmlsdGVyKE5vZGVEZXN0aW5hdGlvbiA9PSAiLTU1LjU0ODAyMDQtLTMwLjg4NTM4ODQiKQ0KYGBgDQoNCmBgYHtyfQ0KDQoNCkRpc3RhbmNlc0xvbmdGb3JtYXQgJT4lIA0KICBmaWx0ZXIoTm9kZXNPcmlnaW4gPT0gIi01NS41NDgwMjA0LS0zMC44ODUzODg0IikgJT4lIA0KICBmaWx0ZXIoTm9kZURlc3RpbmF0aW9uID09ICItNTUuNTQ4MzUxNC0tMzAuODg0ODUyMSIpDQpgYGA=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShtYWdyaXR0cikNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHRtYXApDQpsaWJyYXJ5KGlncmFwaCkNCmBgYA0KDQojTWF0cml6IEN1YWRyYWRhIGRlIGRpc3RhbmNpYXMNCg0KYGBge3J9DQpyb2FkIDwtIHN0X3JlYWQoIlRveURhdGEvUml2ZXJhTmV0d29ya19Ub3lfQ2xlYW5lZC5zaHAiKQ0KDQpyb2FkICU8PiUgbXV0YXRlKElkID0gc2VxKDEsIGRpbShyb2FkKVsxXSwgMSksIA0KICAgICAgICAgICAgICAgICBMZW5ndGggPSBzdF9sZW5ndGgocm9hZCkpICU+JSAjVG8gaGF2ZSBhIHByb3h5IHRvIGltcGVkYW5jZQ0KICAgICAgICAgbXV0YXRlKExlbmd0aCA9IGFzLm51bWVyaWMoTGVuZ3RoKSkgJT4lIA0KICAgICAgICAgc2VsZWN0KElkLCBMZW5ndGgpDQpgYGANCg0KYGBge3J9DQpHcmFwaFJlc3VsdCA8LSBkYXRhLmZyYW1lKFNvdXJjZSA9IGMoTlVMTCksIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBUYXJnZXQgPSBjKE5VTEwpLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0ICA9IGMoTlVMTCkpDQpOb2RlcyA8LSBkYXRhLmZyYW1lKGMoKSkNCg0KDQojI1NlZSBob3cgdG8gY2hhbmdlIHRvIGFwcGx5IGxvZ2ljIG9yIHRvIG1hcCBsb2dpYy4NCmZvciAoaSBpbiAxOmRpbShyb2FkKVsxXSl7DQogIA0KICBUZW1wR3JhcGhSZXN1bHQgPC0gZGF0YS5mcmFtZShTb3VyY2UgPSBjKDApLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVGFyZ2V0ID0gYygwKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdlaWdodCAgPSBjKDApKQ0KICANCiAgVGVtcExpbmsgPC0gcm9hZCAlPiUgc2xpY2UoaSkNCiAgVGVtcE5vZGVzIDwtIHN0X2Nvb3JkaW5hdGVzKFRlbXBMaW5rKSAlPiUgYXMuZGF0YS5mcmFtZSgpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JQ0KICAgICAgbXV0YXRlKElkID0gcGFzdGUoYXMuY2hhcmFjdGVyKFgpLA0KICAgICAgICAgICAgICAgICAgICAgICAgYXMuY2hhcmFjdGVyKFkpLA0KICAgICAgICAgICAgICAgICAgICAgICAgc2VwPSItIikpDQogIA0KICBUZW1wR3JhcGhSZXN1bHQkU291cmNlWzFdIDwtIFRlbXBOb2RlcyRJZFsxXQ0KICBUZW1wR3JhcGhSZXN1bHQkVGFyZ2V0WzFdIDwtIFRlbXBOb2RlcyRJZFtkaW0oVGVtcE5vZGVzKVsxXV0gIyBLRVkNCiAgVGVtcEdyYXBoUmVzdWx0JHdlaWdodCBbMV0gPC0gcm9hZCRMZW5ndGhbaV0NCiAgDQogIEdyYXBoUmVzdWx0IDwtIHJiaW5kKEdyYXBoUmVzdWx0LCBUZW1wR3JhcGhSZXN1bHQpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JSBzbGljZSgxLGRpbShUZW1wTm9kZXMpWzFdKQ0KICANCiAgTm9kZXMgPC0gcmJpbmQoTm9kZXMsIFRlbXBOb2RlcykNCn0NCg0KIyMgDQoNCk15SWdyYXBoIDwtIGdyYXBoX2Zyb21fZGF0YV9mcmFtZShHcmFwaFJlc3VsdCkgDQoNCg0KYGBgDQoNCmBgYHtyfQ0KRGlzdGFuY2VzTWF0cml4IDwtIGRpc3RhbmNlcyhNeUlncmFwaCkNCkRpc3RhbmNlc01hdHJpeCA8LSBhcy5kYXRhLmZyYW1lKERpc3RhbmNlc01hdHJpeCkNCg0KTmFtZXNSb3cgPC0gcm93Lm5hbWVzKERpc3RhbmNlc01hdHJpeCkNCk5hbWVzQ29sdW1ucyA8LSBuYW1lcyhEaXN0YW5jZXNNYXRyaXgpDQpzdW1tYXJ5KE5hbWVzUm93PT1OYW1lc0NvbHVtbnMpDQoNCkRpc3RhbmNlc01hdHJpeCROb2Rlc09yaWdpbiA8LSBOYW1lc1Jvdw0KDQpEaXN0YW5jZXNMb25nRm9ybWF0IDwtIHBpdm90X2xvbmdlcihEaXN0YW5jZXNNYXRyaXgsIGNvbHMgPSAtTm9kZXNPcmlnaW4sDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuYW1lc190byA9ICJOb2RlRGVzdGluYXRpb24iLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdmFsdWVzX3RvID0gIlRyYXZlbFRpbWUiKQ0KDQojIyMjDQoNCk5vZGVzU3VtbWFyeSA8LSBOb2RlcyAlPiUgDQogIGdyb3VwX2J5KElkKSAlPiUgDQogIHN1bW1hcmlzZShUb3RhbExpbmVzID0gbigpLCBMb25nID0gbWluKFgpLCBMYXQgPSBtaW4oWSkpIA0KICANCmBgYA0KDQoNCmBgYHtyfQ0KI3dyaXRlX2RlbGltKERpc3RhbmNlc0xvbmdGb3JtYXQsICJUb3lEYXRhL0Rpc3RhbmNlc19Ub3kuY3N2IiwgZGVsaW0gPSAiOyIpDQojd3JpdGVfZGVsaW0oTm9kZXNTdW1tYXJ5LCAiVG95RGF0YS9Ob2Rlc19Ub3kuY3N2IiwgZGVsaW0gPSAiOyIpDQpgYGANCg0KDQojUG9ibGFjacOzbiB5IE9wb3J0dW5pZGFkZXMNCg0KYGBge3J9DQpFUCA8LSBzdF9yZWFkKCIuLi9QdWJsaWNTcGFjZXMvRVAtUklWRVJBLXBvbHlnb24uc2hwIikNCmBgYA0KDQpgYGB7cn0NClBvbHlnb24gPC0gc3RfcmVhZCgiLi4vRGF0b3NDZW5zby9SaXZlcmEuc2hwIikNCmBgYA0KDQpgYGB7cn0NCkNlbnNvIDwtIHJlYWRfZGVsaW0oIi4uL0RhdG9zQ2Vuc28vTWFyY29DZW5zYWwuY3N2IiwgZGVsaW0gPSAiLCIpDQpgYGANCg0KYGBge3J9DQpQb3B1bGF0aW9uIDwtIFBvbHlnb24gJT4lIGxlZnRfam9pbihDZW5zbywgYnkgPSBjKCJDT0RDT01QIiA9ICJjb2Rjb21wIikpDQpgYGANCg0KIyNDZW50cm9pZGVzIEVzcGFjaW8gUMO6YmxpY28NCg0KYGBge3J9DQoNCmBgYA0KDQojI0NlbnRyb2lkZXMgUG9ibGFjacOzbg0KDQpgYGB7cn0NCg0KYGBgDQoNCiNGaWx0cmFyIERpc3RhbmNpYXMNCg0KYGBge3J9DQoNCmBgYA0KDQoNCiMjUXVlbWFyIFJlc3VsdGFkb3MNCg==</div>
 
 
 
@@ -2000,7 +1973,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("CalculationPrototype.Rmd");
+  window.initializeSourceEmbed("CalculationPrototype 2.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
