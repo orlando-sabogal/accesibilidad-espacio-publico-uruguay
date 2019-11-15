@@ -88,15 +88,18 @@ NodesSummaryGeo <- st_as_sf(x = NodesSummary,
 ```
 
 ```{r}
-#st_write(NodesSummaryGeo, "ToyData/Nodes_Toy.shp")
+#st_write(NodesSummaryGeo, "ToyData/ResultForAnalysis_TOY/Nodes_Toy.shp")
 ```
 
 #Población y Oportunidades
 
 ```{r}
-EP <- st_read("../PublicSpaces/EP-RIVERA-polygon.shp")
+EP <- st_read("../PublicSpaces/EP-RIVERA-polygon.shp") %>% 
+  st_transform(st_crs(road)$epsg)
 
-Polygon <- st_read("../DatosCenso/Rivera.shp")
+Polygon <- st_read("../DatosCenso/Rivera.shp") %>% 
+  st_set_crs(32721) %>% st_transform(st_crs(road)$epsg)
+
 Censo <- read_delim("../DatosCenso/MarcoCensal.csv", delim = ",")
 
 Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
@@ -108,24 +111,64 @@ Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
 
 ```{r}
 EP_Points <- st_centroid(EP)
+
+Distance_EPtoNodes <- st_distance(EP_Points, NodesSummaryGeo)
+
+MinDistances <- apply(Distance_EPtoNodes,1,min)
+MinDistances <- data.frame(Distances = MinDistances, Index = c(0))
+
+for (i in 1:dim(MinDistances)[1]){
+  Value <- MinDistances$Distances[i]
+  IndexTemp <- which(as.numeric(Distance_EPtoNodes[i,])==Value)
+  MinDistances$Index[i] <- IndexTemp
+}
+
+NodesRef <- NodesSummaryGeo %>% slice(MinDistances$Index)
+MinDistances$Node <- NodesRef$Id
+
+MinDistances_EP <- bind_cols(EP, MinDistances)
 ```
+
 
 ##Nodos Población
 
 ```{r}
 Population_Points <- st_centroid(Population)
+
+Distance_PopulationToNodes <- st_distance(Population_Points, NodesSummaryGeo)
+
+MinDistances <- apply(Distance_PopulationToNodes,1,min)
+MinDistances <- data.frame(Distances = MinDistances, Index = c(0))
+
+for (i in 1:dim(MinDistances)[1]){
+  Value <- MinDistances$Distances[i]
+  IndexTemp <- which(as.numeric(Distance_PopulationToNodes[i,])==Value)
+  MinDistances$Index[i] <- IndexTemp
+}
+
+NodesRef <- NodesSummaryGeo %>% slice(MinDistances$Index)
+MinDistances$Node <- NodesRef$Id
+
+MinDistances_Population <- bind_cols(Population, MinDistances)
 ```
 
-#Filtrar Distancias
+##Filtrar Distancias
 
 ```{r}
-
+DistanceForAnalysis <- DistancesLongFormat %>% 
+  filter(NodesOrigin %in% MinDistances_EP$Node) %>% 
+  filter(NodeDestination %in% MinDistances_Population$Node)
 ```
 
 
 ##Quemar Resultados
 
 ```{r}
-
+# st_write(MinDistances_EP, 
+#          "ToyData/ResultForAnalysis_TOY/PublicSpaceRivera.shp")
+# st_write(MinDistances_Population,
+#          "ToyData/ResultForAnalysis_TOY/PopulationRivera.shp")
+# write_delim(DistanceForAnalysis,
+#             "ToyData/ResultForAnalysis_TOY/DistancesRivera.csv")
 ```
 

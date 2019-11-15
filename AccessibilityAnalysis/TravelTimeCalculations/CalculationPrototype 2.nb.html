@@ -1763,19 +1763,14 @@ library(igraph)</code></pre>
 <p>#Matriz Cuadrada de distancias</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm9hZCA8LSBzdF9yZWFkKFwiVG95RGF0YS9SaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocFwiKVxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm9hZCA8LSBzdF9yZWFkKFwiVG95RGF0YS9SaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocFwiKVxuXG5yb2FkICU8PiUgbXV0YXRlKElkID0gc2VxKDEsIGRpbShyb2FkKVsxXSwgMSksIFxuICAgICAgICAgICAgICAgICBMZW5ndGggPSBzdF9sZW5ndGgocm9hZCkpICU+JSAjVG8gaGF2ZSBhIHByb3h5IHRvIGltcGVkYW5jZVxuICAgICAgICAgbXV0YXRlKExlbmd0aCA9IGFzLm51bWVyaWMoTGVuZ3RoKSkgJT4lIFxuICAgICAgICAgc2VsZWN0KElkLCBMZW5ndGgpXG5gYGAifQ== -->
 <pre class="r"><code>road &lt;- st_read(&quot;ToyData/RiveraNetwork_Toy_Cleaned.shp&quot;)
-</code></pre>
+
+road %&lt;&gt;% mutate(Id = seq(1, dim(road)[1], 1), 
+                 Length = st_length(road)) %&gt;% #To have a proxy to impedance
+         mutate(Length = as.numeric(Length)) %&gt;% 
+         select(Id, Length)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVhZGluZyBsYXllciBgUml2ZXJhTmV0d29ya19Ub3lfQ2xlYW5lZCcgZnJvbSBkYXRhIHNvdXJjZSBgQzpcXFVzZXJzXFxPcmxhblxcRHJvcGJveFxcQWNjZXNpYmlsaWRhZEVzcGFjaW9QdWJsaWNvVXJ1Z3VheVxcQWNjZXNzaWJpbGl0eUFuYWx5c2lzXFxUcmF2ZWxUaW1lQ2FsY3VsYXRpb25zXFxUb3lEYXRhXFxSaXZlcmFOZXR3b3JrX1RveV9DbGVhbmVkLnNocCcgdXNpbmcgZHJpdmVyIGBFU1JJIFNoYXBlZmlsZSdcblNpbXBsZSBmZWF0dXJlIGNvbGxlY3Rpb24gd2l0aCA0NjA0IGZlYXR1cmVzIGFuZCAxMiBmaWVsZHNcbmdlb21ldHJ5IHR5cGU6ICBMSU5FU1RSSU5HXG5kaW1lbnNpb246ICAgICAgWFlcbmJib3g6ICAgICAgICAgICB4bWluOiAtNTUuNjE2MjUgeW1pbjogLTMwLjk0NDY1IHhtYXg6IC01NS41MDIxIHltYXg6IC0zMC44NTIxM1xuZXBzZyAoU1JJRCk6ICAgIDQzMjZcbnByb2o0c3RyaW5nOiAgICArcHJvaj1sb25nbGF0ICtkYXR1bT1XR1M4NCArbm9fZGVmc1xuIn0= -->
-<pre><code>Reading layer `RiveraNetwork_Toy_Cleaned&#39; from data source `C:\Users\Orlan\Dropbox\AccesibilidadEspacioPublicoUruguay\AccessibilityAnalysis\TravelTimeCalculations\ToyData\RiveraNetwork_Toy_Cleaned.shp&#39; using driver `ESRI Shapefile&#39;
-Simple feature collection with 4604 features and 12 fields
-geometry type:  LINESTRING
-dimension:      XY
-bbox:           xmin: -55.61625 ymin: -30.94465 xmax: -55.5021 ymax: -30.85213
-epsg (SRID):    4326
-proj4string:    +proj=longlat +datum=WGS84 +no_defs</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1821,18 +1816,40 @@ MyIgraph &lt;- graph_from_data_frame(GraphResult) </code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShOYW1lc1Jvdz09TmFtZXNDb2x1bW5zKVxuXG5gYGAifQ== -->
-<pre class="r"><code>summary(NamesRow==NamesColumns)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRGlzdGFuY2VzTWF0cml4IDwtIGRpc3RhbmNlcyhNeUlncmFwaClcbkRpc3RhbmNlc01hdHJpeCA8LSBhcy5kYXRhLmZyYW1lKERpc3RhbmNlc01hdHJpeClcblxuTmFtZXNSb3cgPC0gcm93Lm5hbWVzKERpc3RhbmNlc01hdHJpeClcbk5hbWVzQ29sdW1ucyA8LSBuYW1lcyhEaXN0YW5jZXNNYXRyaXgpXG5zdW1tYXJ5KE5hbWVzUm93PT1OYW1lc0NvbHVtbnMpXG5gYGAifQ== -->
+<pre class="r"><code>DistancesMatrix &lt;- distances(MyIgraph)
+DistancesMatrix &lt;- as.data.frame(DistancesMatrix)
+
+NamesRow &lt;- row.names(DistancesMatrix)
+NamesColumns &lt;- names(DistancesMatrix)
+summary(NamesRow==NamesColumns)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiICAgTW9kZSAgICBUUlVFIFxubG9naWNhbCAgICAyOTk3IFxuIn0= -->
 <pre><code>   Mode    TRUE 
 logical    2997 </code></pre>
 <!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRGlzdGFuY2VzTWF0cml4JE5vZGVzT3JpZ2luIDwtIE5hbWVzUm93XG5cbkRpc3RhbmNlc0xvbmdGb3JtYXQgPC0gcGl2b3RfbG9uZ2VyKERpc3RhbmNlc01hdHJpeCwgY29scyA9IC1Ob2Rlc09yaWdpbixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5hbWVzX3RvID0gXCJOb2RlRGVzdGluYXRpb25cIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlc190byA9IFwiVHJhdmVsVGltZVwiKVxuXG5gYGAifQ== -->
+<pre class="r"><code>DistancesMatrix$NodesOrigin &lt;- NamesRow
+
+DistancesLongFormat &lt;- pivot_longer(DistancesMatrix, cols = -NodesOrigin,
+                                    names_to = &quot;NodeDestination&quot;,
+                                    values_to = &quot;TravelTime&quot;)
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTm9kZXNTdW1tYXJ5IDwtIE5vZGVzICU+JSBcbiAgZ3JvdXBfYnkoSWQpICU+JSBcbiAgc3VtbWFyaXNlKFRvdGFsTGluZXMgPSBuKCksIExvbmcgPSBtaW4oWCksIExhdCA9IG1pbihZKSkgXG5cbk5vZGVzU3VtbWFyeUdlbyA8LSBzdF9hc19zZih4ID0gTm9kZXNTdW1tYXJ5LCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb29yZHMgPSBjKFwiTG9uZ1wiLCBcIkxhdFwiKSwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgY3JzID0gc3RfY3JzKHJvYWQpJGVwc2cpXG5cbmBgYCJ9 -->
+<pre class="r"><code>NodesSummary &lt;- Nodes %&gt;% 
+  group_by(Id) %&gt;% 
+  summarise(TotalLines = n(), Long = min(X), Lat = min(Y)) 
+
+NodesSummaryGeo &lt;- st_as_sf(x = NodesSummary, 
+                            coords = c(&quot;Long&quot;, &quot;Lat&quot;), 
+                            crs = st_crs(road)$epsg)
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1845,10 +1862,13 @@ logical    2997 </code></pre>
 <p>#Población y Oportunidades</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRVAgPC0gc3RfcmVhZChcIi4uL1B1YmxpY1NwYWNlcy9FUC1SSVZFUkEtcG9seWdvbi5zaHBcIilcblxuUG9seWdvbiA8LSBzdF9yZWFkKFwiLi4vRGF0b3NDZW5zby9SaXZlcmEuc2hwXCIpXG5DZW5zbyA8LSByZWFkX2RlbGltKFwiLi4vRGF0b3NDZW5zby9NYXJjb0NlbnNhbC5jc3ZcIiwgZGVsaW0gPSBcIixcIilcblxuUG9wdWxhdGlvbiA8LSBQb2x5Z29uICU+JSBsZWZ0X2pvaW4oQ2Vuc28sIGJ5ID0gYyhcIkNPRENPTVBcIiA9IFwiY29kY29tcFwiKSlcbmBgYCJ9 -->
-<pre class="r"><code>EP &lt;- st_read(&quot;../PublicSpaces/EP-RIVERA-polygon.shp&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRVAgPC0gc3RfcmVhZChcIi4uL1B1YmxpY1NwYWNlcy9FUC1SSVZFUkEtcG9seWdvbi5zaHBcIikgJT4lIFxuICBzdF90cmFuc2Zvcm0oc3RfY3JzKHJvYWQpJGVwc2cpXG5cblBvbHlnb24gPC0gc3RfcmVhZChcIi4uL0RhdG9zQ2Vuc28vUml2ZXJhLnNocFwiKSAlPiUgXG4gIHN0X3NldF9jcnMoMzI3MjEpICU+JSBzdF90cmFuc2Zvcm0oc3RfY3JzKHJvYWQpJGVwc2cpXG5cbkNlbnNvIDwtIHJlYWRfZGVsaW0oXCIuLi9EYXRvc0NlbnNvL01hcmNvQ2Vuc2FsLmNzdlwiLCBkZWxpbSA9IFwiLFwiKVxuXG5Qb3B1bGF0aW9uIDwtIFBvbHlnb24gJT4lIGxlZnRfam9pbihDZW5zbywgYnkgPSBjKFwiQ09EQ09NUFwiID0gXCJjb2Rjb21wXCIpKVxuYGBgIn0= -->
+<pre class="r"><code>EP &lt;- st_read(&quot;../PublicSpaces/EP-RIVERA-polygon.shp&quot;) %&gt;% 
+  st_transform(st_crs(road)$epsg)
 
-Polygon &lt;- st_read(&quot;../DatosCenso/Rivera.shp&quot;)
+Polygon &lt;- st_read(&quot;../DatosCenso/Rivera.shp&quot;) %&gt;% 
+  st_set_crs(32721) %&gt;% st_transform(st_crs(road)$epsg)
+
 Censo &lt;- read_delim(&quot;../DatosCenso/MarcoCensal.csv&quot;, delim = &quot;,&quot;)
 
 Population &lt;- Polygon %&gt;% left_join(Censo, by = c(&quot;CODCOMP&quot; = &quot;codcomp&quot;))</code></pre>
@@ -1859,22 +1879,35 @@ Population &lt;- Polygon %&gt;% left_join(Censo, by = c(&quot;CODCOMP&quot; = &q
 <p>##Nodos Espacio Público</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRVBfUG9pbnRzIDwtIHN0X2NlbnRyb2lkKEVQKVxuYGBgIn0= -->
-<pre class="r"><code>EP_Points &lt;- st_centroid(EP)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTWluRGlzdGFuY2VzX0VQIDwtIGJpbmRfcm93cyhFUCwgTWluRGlzdGFuY2VzKVxuXG5gYGAifQ== -->
+<pre class="r"><code>MinDistances_EP &lt;- bind_rows(EP, MinDistances)
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVmVjdG9yaXppbmcgJ3NmY19QT0xZR09OJyBlbGVtZW50cyBtYXkgbm90IHByZXNlcnZlIHRoZWlyIGF0dHJpYnV0ZXNcbiJ9 -->
+<pre><code>Vectorizing &#39;sfc_POLYGON&#39; elements may not preserve their attributes</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>##Nodos Población</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9wdWxhdGlvbl9Qb2ludHMgPC0gc3RfY2VudHJvaWQoUG9wdWxhdGlvbilcbmBgYCJ9 -->
-<pre class="r"><code>Population_Points &lt;- st_centroid(Population)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9wdWxhdGlvbl9Qb2ludHMgPC0gc3RfY2VudHJvaWQoUG9wdWxhdGlvbilcblxuYGBgIn0= -->
+<pre class="r"><code>Population_Points &lt;- st_centroid(Population)
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3RfY2VudHJvaWQgYXNzdW1lcyBhdHRyaWJ1dGVzIGFyZSBjb25zdGFudCBvdmVyIGdlb21ldHJpZXMgb2YgeHN0X2NlbnRyb2lkIGRvZXMgbm90IGdpdmUgY29ycmVjdCBjZW50cm9pZHMgZm9yIGxvbmdpdHVkZS9sYXRpdHVkZSBkYXRhXG4ifQ== -->
+<pre><code>st_centroid assumes attributes are constant over geometries of xst_centroid does not give correct centroids for longitude/latitude data</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>#Filtrar Distancias</p>
+<p>##Filtrar Distancias</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRGlzdGFuY2VGb3JBbmFseXNpcyA8LSBEaXN0YW5jZXNMb25nRm9ybWF0ICU+JSBcbiAgZmlsdGVyKE5vZGVzT3JpZ2luICVpbiUgTWluRGlzdGFuY2VzX0VQJE5vZGUpICU+JSBcbiAgZmlsdGVyKE5vZGVEZXN0aW5hdGlvbiAlaW4lIE1pbkRpc3RhbmNlc19Qb3B1bGF0aW9uJE5vZGUpXG5gYGAifQ== -->
+<pre class="r"><code>DistanceForAnalysis &lt;- DistancesLongFormat %&gt;% 
+  filter(NodesOrigin %in% MinDistances_EP$Node) %&gt;% 
+  filter(NodeDestination %in% MinDistances_Population$Node)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>##Quemar Resultados</p>
@@ -1884,7 +1917,7 @@ Population &lt;- Polygon %&gt;% left_join(Censo, by = c(&quot;CODCOMP&quot; = &q
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShtYWdyaXR0cikNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHRtYXApDQpsaWJyYXJ5KGlncmFwaCkNCmBgYA0KDQojTWF0cml6IEN1YWRyYWRhIGRlIGRpc3RhbmNpYXMNCg0KYGBge3J9DQpyb2FkIDwtIHN0X3JlYWQoIlRveURhdGEvUml2ZXJhTmV0d29ya19Ub3lfQ2xlYW5lZC5zaHAiKQ0KDQpyb2FkICU8PiUgbXV0YXRlKElkID0gc2VxKDEsIGRpbShyb2FkKVsxXSwgMSksIA0KICAgICAgICAgICAgICAgICBMZW5ndGggPSBzdF9sZW5ndGgocm9hZCkpICU+JSAjVG8gaGF2ZSBhIHByb3h5IHRvIGltcGVkYW5jZQ0KICAgICAgICAgbXV0YXRlKExlbmd0aCA9IGFzLm51bWVyaWMoTGVuZ3RoKSkgJT4lIA0KICAgICAgICAgc2VsZWN0KElkLCBMZW5ndGgpDQpgYGANCg0KYGBge3J9DQpHcmFwaFJlc3VsdCA8LSBkYXRhLmZyYW1lKFNvdXJjZSA9IGMoTlVMTCksIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBUYXJnZXQgPSBjKE5VTEwpLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0ICA9IGMoTlVMTCkpDQpOb2RlcyA8LSBkYXRhLmZyYW1lKGMoKSkNCg0KDQojI1NlZSBob3cgdG8gY2hhbmdlIHRvIGFwcGx5IGxvZ2ljIG9yIHRvIG1hcCBsb2dpYy4NCmZvciAoaSBpbiAxOmRpbShyb2FkKVsxXSl7DQogIA0KICBUZW1wR3JhcGhSZXN1bHQgPC0gZGF0YS5mcmFtZShTb3VyY2UgPSBjKDApLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVGFyZ2V0ID0gYygwKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdlaWdodCAgPSBjKDApKQ0KICANCiAgVGVtcExpbmsgPC0gcm9hZCAlPiUgc2xpY2UoaSkNCiAgVGVtcE5vZGVzIDwtIHN0X2Nvb3JkaW5hdGVzKFRlbXBMaW5rKSAlPiUgYXMuZGF0YS5mcmFtZSgpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JQ0KICAgICAgbXV0YXRlKElkID0gcGFzdGUoYXMuY2hhcmFjdGVyKFgpLA0KICAgICAgICAgICAgICAgICAgICAgICAgYXMuY2hhcmFjdGVyKFkpLA0KICAgICAgICAgICAgICAgICAgICAgICAgc2VwPSItIikpDQogIA0KICBUZW1wR3JhcGhSZXN1bHQkU291cmNlWzFdIDwtIFRlbXBOb2RlcyRJZFsxXQ0KICBUZW1wR3JhcGhSZXN1bHQkVGFyZ2V0WzFdIDwtIFRlbXBOb2RlcyRJZFtkaW0oVGVtcE5vZGVzKVsxXV0gIyBLRVkNCiAgVGVtcEdyYXBoUmVzdWx0JHdlaWdodCBbMV0gPC0gcm9hZCRMZW5ndGhbaV0NCiAgDQogIEdyYXBoUmVzdWx0IDwtIHJiaW5kKEdyYXBoUmVzdWx0LCBUZW1wR3JhcGhSZXN1bHQpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JSBzbGljZSgxLGRpbShUZW1wTm9kZXMpWzFdKQ0KICANCiAgTm9kZXMgPC0gcmJpbmQoTm9kZXMsIFRlbXBOb2RlcykNCn0NCg0KIyMgDQoNCk15SWdyYXBoIDwtIGdyYXBoX2Zyb21fZGF0YV9mcmFtZShHcmFwaFJlc3VsdCkgDQpgYGANCg0KYGBge3J9DQpEaXN0YW5jZXNNYXRyaXggPC0gZGlzdGFuY2VzKE15SWdyYXBoKQ0KRGlzdGFuY2VzTWF0cml4IDwtIGFzLmRhdGEuZnJhbWUoRGlzdGFuY2VzTWF0cml4KQ0KDQpOYW1lc1JvdyA8LSByb3cubmFtZXMoRGlzdGFuY2VzTWF0cml4KQ0KTmFtZXNDb2x1bW5zIDwtIG5hbWVzKERpc3RhbmNlc01hdHJpeCkNCnN1bW1hcnkoTmFtZXNSb3c9PU5hbWVzQ29sdW1ucykNCg0KRGlzdGFuY2VzTWF0cml4JE5vZGVzT3JpZ2luIDwtIE5hbWVzUm93DQoNCkRpc3RhbmNlc0xvbmdGb3JtYXQgPC0gcGl2b3RfbG9uZ2VyKERpc3RhbmNlc01hdHJpeCwgY29scyA9IC1Ob2Rlc09yaWdpbiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5hbWVzX3RvID0gIk5vZGVEZXN0aW5hdGlvbiIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZXNfdG8gPSAiVHJhdmVsVGltZSIpDQoNCmBgYA0KDQpgYGB7cn0NCk5vZGVzU3VtbWFyeSA8LSBOb2RlcyAlPiUgDQogIGdyb3VwX2J5KElkKSAlPiUgDQogIHN1bW1hcmlzZShUb3RhbExpbmVzID0gbigpLCBMb25nID0gbWluKFgpLCBMYXQgPSBtaW4oWSkpIA0KDQpOb2Rlc1N1bW1hcnlHZW8gPC0gc3RfYXNfc2YoeCA9IE5vZGVzU3VtbWFyeSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgY29vcmRzID0gYygiTG9uZyIsICJMYXQiKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgY3JzID0gc3RfY3JzKHJvYWQpJGVwc2cpDQoNCmBgYA0KDQpgYGB7cn0NCiNzdF93cml0ZShOb2Rlc1N1bW1hcnlHZW8sICJUb3lEYXRhL05vZGVzX1RveS5zaHAiKQ0KYGBgDQoNCiNQb2JsYWNpw7NuIHkgT3BvcnR1bmlkYWRlcw0KDQpgYGB7cn0NCkVQIDwtIHN0X3JlYWQoIi4uL1B1YmxpY1NwYWNlcy9FUC1SSVZFUkEtcG9seWdvbi5zaHAiKQ0KDQpQb2x5Z29uIDwtIHN0X3JlYWQoIi4uL0RhdG9zQ2Vuc28vUml2ZXJhLnNocCIpDQpDZW5zbyA8LSByZWFkX2RlbGltKCIuLi9EYXRvc0NlbnNvL01hcmNvQ2Vuc2FsLmNzdiIsIGRlbGltID0gIiwiKQ0KDQpQb3B1bGF0aW9uIDwtIFBvbHlnb24gJT4lIGxlZnRfam9pbihDZW5zbywgYnkgPSBjKCJDT0RDT01QIiA9ICJjb2Rjb21wIikpDQpgYGANCg0KI09wb3J0dW5pZGFkZXMgeSBQb2JsYWNpw7NuIGEgTm9kb3MNCg0KIyNOb2RvcyBFc3BhY2lvIFDDumJsaWNvDQoNCmBgYHtyfQ0KRVBfUG9pbnRzIDwtIHN0X2NlbnRyb2lkKEVQKQ0KYGBgDQoNCiMjTm9kb3MgUG9ibGFjacOzbg0KDQpgYGB7cn0NClBvcHVsYXRpb25fUG9pbnRzIDwtIHN0X2NlbnRyb2lkKFBvcHVsYXRpb24pDQpgYGANCg0KI0ZpbHRyYXIgRGlzdGFuY2lhcw0KDQpgYGB7cn0NCg0KYGBgDQoNCg0KIyNRdWVtYXIgUmVzdWx0YWRvcw0KDQpgYGB7cn0NCg0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShtYWdyaXR0cikNCmxpYnJhcnkoc2YpDQpsaWJyYXJ5KHRtYXApDQpsaWJyYXJ5KGlncmFwaCkNCmBgYA0KDQojTWF0cml6IEN1YWRyYWRhIGRlIGRpc3RhbmNpYXMNCg0KYGBge3J9DQpyb2FkIDwtIHN0X3JlYWQoIlRveURhdGEvUml2ZXJhTmV0d29ya19Ub3lfQ2xlYW5lZC5zaHAiKQ0KDQpyb2FkICU8PiUgbXV0YXRlKElkID0gc2VxKDEsIGRpbShyb2FkKVsxXSwgMSksIA0KICAgICAgICAgICAgICAgICBMZW5ndGggPSBzdF9sZW5ndGgocm9hZCkpICU+JSAjVG8gaGF2ZSBhIHByb3h5IHRvIGltcGVkYW5jZQ0KICAgICAgICAgbXV0YXRlKExlbmd0aCA9IGFzLm51bWVyaWMoTGVuZ3RoKSkgJT4lIA0KICAgICAgICAgc2VsZWN0KElkLCBMZW5ndGgpDQpgYGANCg0KYGBge3J9DQpHcmFwaFJlc3VsdCA8LSBkYXRhLmZyYW1lKFNvdXJjZSA9IGMoTlVMTCksIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBUYXJnZXQgPSBjKE5VTEwpLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgd2VpZ2h0ICA9IGMoTlVMTCkpDQpOb2RlcyA8LSBkYXRhLmZyYW1lKGMoKSkNCg0KDQojI1NlZSBob3cgdG8gY2hhbmdlIHRvIGFwcGx5IGxvZ2ljIG9yIHRvIG1hcCBsb2dpYy4NCmZvciAoaSBpbiAxOmRpbShyb2FkKVsxXSl7DQogIA0KICBUZW1wR3JhcGhSZXN1bHQgPC0gZGF0YS5mcmFtZShTb3VyY2UgPSBjKDApLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVGFyZ2V0ID0gYygwKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdlaWdodCAgPSBjKDApKQ0KICANCiAgVGVtcExpbmsgPC0gcm9hZCAlPiUgc2xpY2UoaSkNCiAgVGVtcE5vZGVzIDwtIHN0X2Nvb3JkaW5hdGVzKFRlbXBMaW5rKSAlPiUgYXMuZGF0YS5mcmFtZSgpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JQ0KICAgICAgbXV0YXRlKElkID0gcGFzdGUoYXMuY2hhcmFjdGVyKFgpLA0KICAgICAgICAgICAgICAgICAgICAgICAgYXMuY2hhcmFjdGVyKFkpLA0KICAgICAgICAgICAgICAgICAgICAgICAgc2VwPSItIikpDQogIA0KICBUZW1wR3JhcGhSZXN1bHQkU291cmNlWzFdIDwtIFRlbXBOb2RlcyRJZFsxXQ0KICBUZW1wR3JhcGhSZXN1bHQkVGFyZ2V0WzFdIDwtIFRlbXBOb2RlcyRJZFtkaW0oVGVtcE5vZGVzKVsxXV0gIyBLRVkNCiAgVGVtcEdyYXBoUmVzdWx0JHdlaWdodCBbMV0gPC0gcm9hZCRMZW5ndGhbaV0NCiAgDQogIEdyYXBoUmVzdWx0IDwtIHJiaW5kKEdyYXBoUmVzdWx0LCBUZW1wR3JhcGhSZXN1bHQpDQogIA0KICBUZW1wTm9kZXMgPC0gVGVtcE5vZGVzICU+JSBzbGljZSgxLGRpbShUZW1wTm9kZXMpWzFdKQ0KICANCiAgTm9kZXMgPC0gcmJpbmQoTm9kZXMsIFRlbXBOb2RlcykNCn0NCg0KIyMgDQoNCk15SWdyYXBoIDwtIGdyYXBoX2Zyb21fZGF0YV9mcmFtZShHcmFwaFJlc3VsdCkgDQpgYGANCg0KYGBge3J9DQpEaXN0YW5jZXNNYXRyaXggPC0gZGlzdGFuY2VzKE15SWdyYXBoKQ0KRGlzdGFuY2VzTWF0cml4IDwtIGFzLmRhdGEuZnJhbWUoRGlzdGFuY2VzTWF0cml4KQ0KDQpOYW1lc1JvdyA8LSByb3cubmFtZXMoRGlzdGFuY2VzTWF0cml4KQ0KTmFtZXNDb2x1bW5zIDwtIG5hbWVzKERpc3RhbmNlc01hdHJpeCkNCnN1bW1hcnkoTmFtZXNSb3c9PU5hbWVzQ29sdW1ucykNCg0KRGlzdGFuY2VzTWF0cml4JE5vZGVzT3JpZ2luIDwtIE5hbWVzUm93DQoNCkRpc3RhbmNlc0xvbmdGb3JtYXQgPC0gcGl2b3RfbG9uZ2VyKERpc3RhbmNlc01hdHJpeCwgY29scyA9IC1Ob2Rlc09yaWdpbiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5hbWVzX3RvID0gIk5vZGVEZXN0aW5hdGlvbiIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZXNfdG8gPSAiVHJhdmVsVGltZSIpDQoNCmBgYA0KDQpgYGB7cn0NCk5vZGVzU3VtbWFyeSA8LSBOb2RlcyAlPiUgDQogIGdyb3VwX2J5KElkKSAlPiUgDQogIHN1bW1hcmlzZShUb3RhbExpbmVzID0gbigpLCBMb25nID0gbWluKFgpLCBMYXQgPSBtaW4oWSkpIA0KDQpOb2Rlc1N1bW1hcnlHZW8gPC0gc3RfYXNfc2YoeCA9IE5vZGVzU3VtbWFyeSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgY29vcmRzID0gYygiTG9uZyIsICJMYXQiKSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgY3JzID0gc3RfY3JzKHJvYWQpJGVwc2cpDQoNCmBgYA0KDQpgYGB7cn0NCiNzdF93cml0ZShOb2Rlc1N1bW1hcnlHZW8sICJUb3lEYXRhL1Jlc3VsdEZvckFuYWx5c2lzX1RPWS9Ob2Rlc19Ub3kuc2hwIikNCmBgYA0KDQojUG9ibGFjacOzbiB5IE9wb3J0dW5pZGFkZXMNCg0KYGBge3J9DQpFUCA8LSBzdF9yZWFkKCIuLi9QdWJsaWNTcGFjZXMvRVAtUklWRVJBLXBvbHlnb24uc2hwIikgJT4lIA0KICBzdF90cmFuc2Zvcm0oc3RfY3JzKHJvYWQpJGVwc2cpDQoNClBvbHlnb24gPC0gc3RfcmVhZCgiLi4vRGF0b3NDZW5zby9SaXZlcmEuc2hwIikgJT4lIA0KICBzdF9zZXRfY3JzKDMyNzIxKSAlPiUgc3RfdHJhbnNmb3JtKHN0X2Nycyhyb2FkKSRlcHNnKQ0KDQpDZW5zbyA8LSByZWFkX2RlbGltKCIuLi9EYXRvc0NlbnNvL01hcmNvQ2Vuc2FsLmNzdiIsIGRlbGltID0gIiwiKQ0KDQpQb3B1bGF0aW9uIDwtIFBvbHlnb24gJT4lIGxlZnRfam9pbihDZW5zbywgYnkgPSBjKCJDT0RDT01QIiA9ICJjb2Rjb21wIikpDQpgYGANCg0KI09wb3J0dW5pZGFkZXMgeSBQb2JsYWNpw7NuIGEgTm9kb3MNCg0KIyNOb2RvcyBFc3BhY2lvIFDDumJsaWNvDQoNCmBgYHtyfQ0KRVBfUG9pbnRzIDwtIHN0X2NlbnRyb2lkKEVQKQ0KDQpEaXN0YW5jZV9FUHRvTm9kZXMgPC0gc3RfZGlzdGFuY2UoRVBfUG9pbnRzLCBOb2Rlc1N1bW1hcnlHZW8pDQoNCk1pbkRpc3RhbmNlcyA8LSBhcHBseShEaXN0YW5jZV9FUHRvTm9kZXMsMSxtaW4pDQpNaW5EaXN0YW5jZXMgPC0gZGF0YS5mcmFtZShEaXN0YW5jZXMgPSBNaW5EaXN0YW5jZXMsIEluZGV4ID0gYygwKSkNCg0KZm9yIChpIGluIDE6ZGltKE1pbkRpc3RhbmNlcylbMV0pew0KICBWYWx1ZSA8LSBNaW5EaXN0YW5jZXMkRGlzdGFuY2VzW2ldDQogIEluZGV4VGVtcCA8LSB3aGljaChhcy5udW1lcmljKERpc3RhbmNlX0VQdG9Ob2Rlc1tpLF0pPT1WYWx1ZSkNCiAgTWluRGlzdGFuY2VzJEluZGV4W2ldIDwtIEluZGV4VGVtcA0KfQ0KDQpOb2Rlc1JlZiA8LSBOb2Rlc1N1bW1hcnlHZW8gJT4lIHNsaWNlKE1pbkRpc3RhbmNlcyRJbmRleCkNCk1pbkRpc3RhbmNlcyROb2RlIDwtIE5vZGVzUmVmJElkDQoNCk1pbkRpc3RhbmNlc19FUCA8LSBiaW5kX2NvbHMoRVAsIE1pbkRpc3RhbmNlcykNCmBgYA0KDQoNCiMjTm9kb3MgUG9ibGFjacOzbg0KDQpgYGB7cn0NClBvcHVsYXRpb25fUG9pbnRzIDwtIHN0X2NlbnRyb2lkKFBvcHVsYXRpb24pDQoNCkRpc3RhbmNlX1BvcHVsYXRpb25Ub05vZGVzIDwtIHN0X2Rpc3RhbmNlKFBvcHVsYXRpb25fUG9pbnRzLCBOb2Rlc1N1bW1hcnlHZW8pDQoNCk1pbkRpc3RhbmNlcyA8LSBhcHBseShEaXN0YW5jZV9Qb3B1bGF0aW9uVG9Ob2RlcywxLG1pbikNCk1pbkRpc3RhbmNlcyA8LSBkYXRhLmZyYW1lKERpc3RhbmNlcyA9IE1pbkRpc3RhbmNlcywgSW5kZXggPSBjKDApKQ0KDQpmb3IgKGkgaW4gMTpkaW0oTWluRGlzdGFuY2VzKVsxXSl7DQogIFZhbHVlIDwtIE1pbkRpc3RhbmNlcyREaXN0YW5jZXNbaV0NCiAgSW5kZXhUZW1wIDwtIHdoaWNoKGFzLm51bWVyaWMoRGlzdGFuY2VfUG9wdWxhdGlvblRvTm9kZXNbaSxdKT09VmFsdWUpDQogIE1pbkRpc3RhbmNlcyRJbmRleFtpXSA8LSBJbmRleFRlbXANCn0NCg0KTm9kZXNSZWYgPC0gTm9kZXNTdW1tYXJ5R2VvICU+JSBzbGljZShNaW5EaXN0YW5jZXMkSW5kZXgpDQpNaW5EaXN0YW5jZXMkTm9kZSA8LSBOb2Rlc1JlZiRJZA0KDQpNaW5EaXN0YW5jZXNfUG9wdWxhdGlvbiA8LSBiaW5kX2NvbHMoUG9wdWxhdGlvbiwgTWluRGlzdGFuY2VzKQ0KYGBgDQoNCiMjRmlsdHJhciBEaXN0YW5jaWFzDQoNCmBgYHtyfQ0KRGlzdGFuY2VGb3JBbmFseXNpcyA8LSBEaXN0YW5jZXNMb25nRm9ybWF0ICU+JSANCiAgZmlsdGVyKE5vZGVzT3JpZ2luICVpbiUgTWluRGlzdGFuY2VzX0VQJE5vZGUpICU+JSANCiAgZmlsdGVyKE5vZGVEZXN0aW5hdGlvbiAlaW4lIE1pbkRpc3RhbmNlc19Qb3B1bGF0aW9uJE5vZGUpDQpgYGANCg0KDQojI1F1ZW1hciBSZXN1bHRhZG9zDQoNCmBgYHtyfQ0KIyBzdF93cml0ZShNaW5EaXN0YW5jZXNfRVAsIA0KIyAgICAgICAgICAiVG95RGF0YS9SZXN1bHRGb3JBbmFseXNpc19UT1kvUHVibGljU3BhY2VSaXZlcmEuc2hwIikNCiMgc3Rfd3JpdGUoTWluRGlzdGFuY2VzX1BvcHVsYXRpb24sDQojICAgICAgICAgICJUb3lEYXRhL1Jlc3VsdEZvckFuYWx5c2lzX1RPWS9Qb3B1bGF0aW9uUml2ZXJhLnNocCIpDQojIHdyaXRlX2RlbGltKERpc3RhbmNlRm9yQW5hbHlzaXMsDQojICAgICAgICAgICAgICJUb3lEYXRhL1Jlc3VsdEZvckFuYWx5c2lzX1RPWS9EaXN0YW5jZXNSaXZlcmEuY3N2IikNCmBgYA0KDQo=</div>
 
 
 
