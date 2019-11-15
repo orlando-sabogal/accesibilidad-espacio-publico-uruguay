@@ -62,5 +62,5 @@ Con la función *v.clean* de *GRASS* se obtiene una red donde las líneas se han
 
 La implementación preliminar está en el archivo **"CalculationPrototype.Rmd"** (dentro de la misma carpeta que este archivo) y genera dos resultados que están en la carpeta **ToyData**:
 
-- **"Distances_Toy.csv"**: Este objeto tiene el valor de las distancias (que en realidad deberían ser tiempos de viaje) para cada par origen destino. 
-- **"Nodes_Toy.csv"**: Son los nodos con las coordendas y la variable de identificación. Es importante tener muy presente que *el CRS de este objeto (cuando se convierta a un shape) debe ser establecido (NO PROYECTADO) al mismo CRS del archivo de líneas de OSM originalmente utilizado-*
+- **"Distances_Toy.csv"**: Este objeto tiene el valor de las distancias (que en realidad deberían ser tiempos de viaje) para cada par origen destino.
+- **"Nodes_Toy.shp**: Son los nodos con las coordendas y la variable de identificación. Es importante tener muy presente que *el CRS de este objeto (cuando se convierta a un shape) debe ser establecido (NO PROYECTADO) al mismo CRS del archivo de líneas de OSM originalmente utilizado-*

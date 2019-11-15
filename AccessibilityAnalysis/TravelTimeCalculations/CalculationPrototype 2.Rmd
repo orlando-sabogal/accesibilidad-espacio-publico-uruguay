@@ -58,8 +58,6 @@ for (i in 1:dim(road)[1]){
 ## 
 
 MyIgraph <- graph_from_data_frame(GraphResult) 
-
-
 ```
 
 ```{r}
@@ -76,49 +74,46 @@ DistancesLongFormat <- pivot_longer(DistancesMatrix, cols = -NodesOrigin,
                                     names_to = "NodeDestination",
                                     values_to = "TravelTime")
 
-####
+```
 
+```{r}
 NodesSummary <- Nodes %>% 
   group_by(Id) %>% 
   summarise(TotalLines = n(), Long = min(X), Lat = min(Y)) 
-  
-```
 
+NodesSummaryGeo <- st_as_sf(x = NodesSummary, 
+                            coords = c("Long", "Lat"), 
+                            crs = st_crs(road)$epsg)
+
+```
 
 ```{r}
-#write_delim(DistancesLongFormat, "ToyData/Distances_Toy.csv", delim = ";")
-#write_delim(NodesSummary, "ToyData/Nodes_Toy.csv", delim = ";")
+#st_write(NodesSummaryGeo, "ToyData/Nodes_Toy.shp")
 ```
-
 
 #Población y Oportunidades
 
 ```{r}
 EP <- st_read("../PublicSpaces/EP-RIVERA-polygon.shp")
-```
 
-```{r}
 Polygon <- st_read("../DatosCenso/Rivera.shp")
-```
-
-```{r}
 Censo <- read_delim("../DatosCenso/MarcoCensal.csv", delim = ",")
-```
 
-```{r}
 Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
 ```
 
-##Centroides Espacio Público
+#Oportunidades y Población a Nodos
+
+##Nodos Espacio Público
 
 ```{r}
-
+EP_Points <- st_centroid(EP)
 ```
 
-##Centroides Población
+##Nodos Población
 
 ```{r}
-
+Population_Points <- st_centroid(Population)
 ```
 
 #Filtrar Distancias
@@ -129,3 +124,8 @@ Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
 
 
 ##Quemar Resultados
+
+```{r}
+
+```
+
