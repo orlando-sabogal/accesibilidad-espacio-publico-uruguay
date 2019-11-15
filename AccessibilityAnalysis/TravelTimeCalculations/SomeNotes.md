@@ -64,6 +64,11 @@ La implementación preliminar está en el archivo **"CalculationPrototype.Rmd"**
 
 
 - **"Nodes_Toy.shp**: Son los nodos con las coordendas y la variable de identificación. Es importante tener muy presente que *el CRS de este objeto (cuando se convierta a un shape) debe ser establecido (NO PROYECTADO) al mismo CRS del archivo de líneas de OSM originalmente utilizado-*
-- **"Distances_Toy.csv"**: Este objeto tiene el valor de las distancias (que en realidad deberían ser tiempos de viaje) para cada par origen destino donde los orígenes lo da la población (CENSO) y el destino el espacio público. Esto es más eficiente que guardar todas las distancias (para una red simple la matriz puede pesar entre 0.5 y 1 giga) o hacer los calculos de distancia cada vez que se va a calcular accesibilidad.
+- **"Distances_Toy.csv"**: Este objeto tiene el valor de las distancias (que en realidad deberían ser tiempos de viaje) para cada par origen destino donde los orígenes lo da la población (CENSO) y el destino el espacio público. Esto es más eficiente que guardar todas las distancias (para una red simple la matriz puede pesar entre 0.5 y 1 giga) o hacer los calculos de distancia cada vez que se va a calcular accesibilidad. **Este objeto se va a usar para sacar los datos para el Kriging.**
 - **PublicSpaceRivera.shp**: EL mismo objeto de espacio público pero con una variable de identificación **"Node** del nodo más cercano y que es la llave común con *Nodes_Toy.shp* y *Distances_Toy.csv.*
 - **PopulationRivera.shp**: El mismo objeto de polígonos pero con la información del *Censo* y con un variable de identificación **"Node** del nodo más cercano y que es la llave común con *Nodes_Toy.shp* y *Distances_Toy.csv.*
+- **MatrixOA.csv**: Este es el resultado para usar el modelo de oportunidades Acumuladas. La variable **Node** es la llave, **Population** la cantidad de población y luego vienen los **Gap_** que establece cuántas oportunidades se alcanzan para cada *Impedancia.*
+
+<hr>
+
+Después de esto, se puede proceder a hacer el análisis de accesibilidad.

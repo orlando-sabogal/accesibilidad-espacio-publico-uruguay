@@ -156,8 +156,8 @@ MinDistances_Population <- bind_cols(Population, MinDistances)
 
 ```{r}
 DistanceForAnalysis <- DistancesLongFormat %>% 
-  filter(NodesOrigin %in% MinDistances_EP$Node) %>% 
-  filter(NodeDestination %in% MinDistances_Population$Node)
+  filter(NodesOrigin %in% MinDistances_Population$Node) %>% 
+  filter(NodeDestination %in% MinDistances_EP$Node)
 ```
 
 
@@ -170,5 +170,47 @@ DistanceForAnalysis <- DistancesLongFormat %>%
 #          "ToyData/ResultForAnalysis_TOY/PopulationRivera.shp")
 # write_delim(DistanceForAnalysis,
 #             "ToyData/ResultForAnalysis_TOY/DistancesRivera.csv")
+```
+
+
+#Matriz Para modelo de Oportunidades Acumuladas
+
+```{r}
+summary(DistanceForAnalysis$TravelTime)
+ggplot(data = DistanceForAnalysis) + geom_histogram(aes(x = TravelTime))
+```
+
+```{r}
+Ref <- seq(0,5000,500) #Double check the units
+
+Population_OA <- rep(0, dim(MinDistances_Population)[1]*length(Ref))
+dim(Population_OA) <- c(dim(MinDistances_Population)[1], length(Ref))
+Population_OA <- as.data.frame(Population_OA)
+names(Population_OA) <- paste("Gap",Ref, sep = "_")
+
+for (i in seq_along(Ref)){
+  Reference <- Ref[i]
+  for (j in 1:dim(MinDistances_Population)[1]){
+    DistTemp <- DistanceForAnalysis %>% 
+      filter(NodesOrigin == MinDistances_Population$Node[j]) %>% 
+      filter(TravelTime <= Reference)
+    
+    TotalOpportunities <- dim(DistTemp)[1]  
+    
+    Population_OA[j,i] <- TotalOpportunities
+  }
+  print(i)
+}
+
+
+TempDataFram <- data.frame(Node = MinDistances_Population$Node, 
+                           Population = MinDistances_Population$P_TOT)
+
+Population_OA <- bind_cols(TempDataFram, Population_OA)
+
+```
+
+```{r}
+#write_delim(Population_OA, "ToyData/ResultForAnalysis_TOY/MatrixOA.csv")
 ```
 
