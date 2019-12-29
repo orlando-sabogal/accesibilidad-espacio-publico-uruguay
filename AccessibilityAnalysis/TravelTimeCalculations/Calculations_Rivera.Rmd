@@ -1,0 +1,214 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(sf)
+library(tmap)
+library(igraph)
+```
+
+#Matriz Cuadrada de distancias
+
+```{r}
+road <- st_read("../RoadNetworks/Rivera/RiveraNetwork_Cleaned.shp")
+#road <- st_read("ToyData/RiveraNetwork_Toy_Cleaned.shp")
+
+road %<>% mutate(Id = seq(1, dim(road)[1], 1), 
+                 Length = st_length(road)) %>% #To have a proxy to impedance
+         mutate(Length = as.numeric(Length)) %>% 
+         select(Id, Length)
+```
+
+```{r}
+GraphResult <- data.frame(Source = c(NULL), 
+                          Target = c(NULL), 
+                          weight  = c(NULL))
+Nodes <- data.frame(c())
+
+for (i in 1:dim(road)[1]){
+  
+  TempGraphResult <- data.frame(Source = c(0), 
+                                Target = c(0), 
+                                weight  = c(0))
+  
+  TempLink <- road %>% slice(i)
+  TempNodes <- st_coordinates(TempLink) %>% as.data.frame()
+  
+  TempNodes <- TempNodes %>%
+      mutate(Id = paste(as.character(X),
+                        as.character(Y),
+                        sep="-"))
+  
+  TempGraphResult$Source[1] <- TempNodes$Id[1]
+  TempGraphResult$Target[1] <- TempNodes$Id[dim(TempNodes)[1]] # KEY
+  TempGraphResult$weight [1] <- road$Length[i]
+  
+  GraphResult <- rbind(GraphResult, TempGraphResult)
+  
+  TempNodes <- TempNodes %>% slice(1,dim(TempNodes)[1])
+  
+  Nodes <- rbind(Nodes, TempNodes)
+}
+
+## 
+
+MyIgraph <- graph_from_data_frame(GraphResult) 
+```
+
+```{r}
+DistancesMatrix <- distances(MyIgraph)
+DistancesMatrix <- as.data.frame(DistancesMatrix)
+
+NamesRow <- row.names(DistancesMatrix)
+NamesColumns <- names(DistancesMatrix)
+summary(NamesRow==NamesColumns)
+
+DistancesMatrix$NodesOrigin <- NamesRow
+
+DistancesLongFormat <- pivot_longer(DistancesMatrix, cols = -NodesOrigin,
+                                    names_to = "NodeDestination",
+                                    values_to = "TravelTime")
+
+```
+
+```{r}
+NodesSummary <- Nodes %>% 
+  group_by(Id) %>% 
+  summarise(TotalLines = n(), Long = min(X), Lat = min(Y)) 
+
+NodesSummaryGeo <- st_as_sf(x = NodesSummary, 
+                            coords = c("Long", "Lat"), 
+                            crs = st_crs(road)$epsg)
+
+```
+
+
+#Población y Oportunidades
+
+```{r}
+EP <- st_read("../PublicSpaces/Rivera/Puntos_Rivera.shp") %>% 
+  st_transform(st_crs(road)$epsg)
+
+
+Polygon <- st_read("../DatosCenso/Rivera.shp") %>% 
+  st_set_crs(32721) %>% st_transform(st_crs(road)$epsg)
+
+Censo <- read_delim("../DatosCenso/MarcoCensal.csv", delim = ",")
+
+Population <- Polygon %>% left_join(Censo, by = c("CODCOMP" = "codcomp"))
+```
+
+#Oportunidades y Población a Nodos
+
+##Nodos Espacio Público
+
+```{r}
+EP_Points <- EP
+
+Distance_EPtoNodes <- st_distance(EP_Points, NodesSummaryGeo)
+
+MinDistances <- apply(Distance_EPtoNodes,1,min)
+MinDistances <- data.frame(Distances = MinDistances, Index = c(0))
+
+for (i in 1:dim(MinDistances)[1]){
+  Value <- MinDistances$Distances[i]
+  IndexTemp <- which(as.numeric(Distance_EPtoNodes[i,])==Value)
+  MinDistances$Index[i] <- IndexTemp
+}
+
+NodesRef <- NodesSummaryGeo %>% slice(MinDistances$Index)
+MinDistances$Node <- NodesRef$Id
+
+MinDistances_EP <- bind_cols(EP, MinDistances)
+```
+
+
+##Nodos Población
+
+```{r}
+Population_Points <- st_centroid(Population)
+
+Distance_PopulationToNodes <- st_distance(Population_Points, NodesSummaryGeo)
+
+MinDistances <- apply(Distance_PopulationToNodes,1,min)
+MinDistances <- data.frame(Distances = MinDistances, Index = c(0))
+
+for (i in 1:dim(MinDistances)[1]){
+  Value <- MinDistances$Distances[i]
+  IndexTemp <- which(as.numeric(Distance_PopulationToNodes[i,])==Value)
+  MinDistances$Index[i] <- IndexTemp
+}
+
+NodesRef <- NodesSummaryGeo %>% slice(MinDistances$Index)
+MinDistances$Node <- NodesRef$Id
+
+MinDistances_Population <- bind_cols(Population, MinDistances)
+```
+
+##Filtrar Distancias
+
+```{r}
+DistanceForAnalysis <- DistancesLongFormat %>% 
+  filter(NodesOrigin %in% MinDistances_Population$Node) %>% 
+  filter(NodeDestination %in% MinDistances_EP$Node)
+```
+
+
+#Matriz Para modelo de Oportunidades Acumuladas
+
+```{r}
+summary(DistanceForAnalysis$TravelTime)
+ggplot(data = DistanceForAnalysis) + geom_histogram(aes(x = TravelTime))
+```
+
+```{r}
+MinDistances_EP_2 <- MinDistances_EP %>% st_set_geometry(NULL)
+```
+
+
+```{r}
+Ref <- seq(0,5000,200) #Double check the units
+
+Population_OA <- rep(0, dim(MinDistances_Population)[1]*length(Ref))
+dim(Population_OA) <- c(dim(MinDistances_Population)[1], length(Ref))
+Population_OA <- as.data.frame(Population_OA)
+names(Population_OA) <- paste("Gap",Ref, sep = "_")
+
+for (i in seq_along(Ref)){
+  Reference <- Ref[i]
+  for (j in 1:dim(MinDistances_Population)[1]){
+    DistTemp <- DistanceForAnalysis %>% 
+      filter(NodesOrigin == MinDistances_Population$Node[j]) %>% 
+      filter(TravelTime <= Reference)
+    
+    ##
+    DistTemp %<>% left_join(MinDistances_EP_2, by = c("NodeDestination" = "Node"))
+    DistTemp_Final <- DistTemp %>% group_by(EspacioID) %>% summarise(Total = n())
+    ##
+    
+    TotalOpportunities <- dim(DistTemp_Final)[1]  
+    
+    Population_OA[j,i] <- TotalOpportunities
+  }
+  print(i)
+}
+
+
+TempDataFram <- data.frame(Node = MinDistances_Population$Node, 
+                           Population = MinDistances_Population$P_TOT)
+
+Population_OA <- bind_cols(TempDataFram, Population_OA)
+
+```
+
+```{r}
+
+write_delim(Population_OA, "Results/Rivera/MatrixOA_Rivera")
+st_write(MinDistances_Population, "Results/Rivera/Pouplation_Rivera.shp")
+
+```
+
