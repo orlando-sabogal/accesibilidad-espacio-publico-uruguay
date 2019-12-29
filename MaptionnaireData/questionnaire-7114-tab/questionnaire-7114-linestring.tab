@@ -1,0 +1,53 @@
+!table
+!version 300
+!charset Neutral
+
+Definition Table
+  Type NATIVE Charset "Neutral"
+  Fields 46
+    createtime Char (254) ;
+    buttonname Char (254) ;
+    respondent Integer ;
+    id Integer ;
+    question1 Char (254) ;
+    answer1 Char (254) ;
+    question2 Char (254) ;
+    answer2 Char (254) ;
+    question3 Char (254) ;
+    answer3 Char (254) ;
+    question4 Char (254) ;
+    answer4 Char (254) ;
+    question5 Char (254) ;
+    answer5 Char (254) ;
+    question6 Char (254) ;
+    answer6 Char (254) ;
+    question7 Char (254) ;
+    answer7 Char (254) ;
+    question8 Char (254) ;
+    answer8 Char (254) ;
+    question9 Char (254) ;
+    answer9 Char (254) ;
+    question10 Char (254) ;
+    answer10 Char (254) ;
+    question11 Char (254) ;
+    answer11 Char (254) ;
+    question12 Char (254) ;
+    answer12 Char (254) ;
+    question13 Char (254) ;
+    answer13 Char (254) ;
+    question14 Char (254) ;
+    answer14 Char (254) ;
+    question15 Char (254) ;
+    answer15 Char (254) ;
+    question16 Char (254) ;
+    answer16 Char (254) ;
+    question17 Char (254) ;
+    answer17 Char (254) ;
+    question18 Char (254) ;
+    answer18 Char (254) ;
+    question19 Char (254) ;
+    answer19 Char (254) ;
+    question20 Char (254) ;
+    answer20 Char (254) ;
+    question21 Char (254) ;
+    answer21 Char (254) ;
